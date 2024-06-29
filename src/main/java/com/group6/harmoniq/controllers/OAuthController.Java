@@ -9,7 +9,7 @@ public class OAuthController {
 
     @Autowired
     private UserRepository userRepository;
-
+    // callback mapping is placeholder
     @GetMapping("/callback")
     public String callback(Map<String, String> oauthData) {
         // Extract necessary data from OAuth response
