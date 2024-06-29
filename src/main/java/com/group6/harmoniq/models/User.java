@@ -35,6 +35,9 @@ public class User {
 
     // How long access token is valid
     private int expiresIn;
+
+    // Default is regular user
+    private Boolean isAdmin = false;
     
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,13 +46,14 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String spotifyId, String displayName, String email, String accessToken, String refreshToken, int expiresIn) {
+    public User(String spotifyId, String displayName, String email, String accessToken, String refreshToken, int expiresIn, Boolean isAdmin) {
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
+        this.isAdmin = isAdmin != null ? isAdmin : false; // Ensure isAdmin is not null
     }
 
     public Long getId() {
@@ -110,6 +114,14 @@ public class User {
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
 
