@@ -27,6 +27,8 @@ public class User {
 
     private String email;
 
+    private int quizScore;
+
     // Allows access to user data
     private String accessToken;
 
@@ -122,6 +124,14 @@ public class User {
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public int getQuizScore() {
+        return quizScore;
+    }
+
+    public void setQuizScore(int quizScore) {
+        this.quizScore = quizScore;
     }
 
 
