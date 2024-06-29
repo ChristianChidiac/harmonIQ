@@ -17,9 +17,9 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long uid;
 
-    // Enforce ID uniqueness and ensures every user has Spotify user ID
+    // Enforce SpotifyID uniqueness and ensures every user has Spotify user ID
     @Column(unique = true, nullable = false)
     private String spotifyId;
     
@@ -41,7 +41,7 @@ public class User {
     
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    private final Date createdAt = new Date();
 
     // Constructors
     public User() {}
@@ -53,15 +53,15 @@ public class User {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
-        this.isAdmin = isAdmin != null ? isAdmin : false; // Ensure isAdmin is not null
+        this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
-    public Long getId() {
-        return id;
+    public Long getUId() {
+        return uid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUId(long id) {
+        this.uid = id;
     }
 
     public String getSpotifyId() {
