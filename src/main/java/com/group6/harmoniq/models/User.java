@@ -8,6 +8,9 @@ public class User {
     private String id;
     private String imageUrl;
 
+    public User() {
+    }
+
     public User(String displayName, String email, String externalSpotifyUrl, int followers, String id,
             String imageUrl) {
         this.displayName = displayName;
@@ -61,7 +64,7 @@ public class User {
     public String getImageUrl() {
         return imageUrl;
     }
-    
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
