@@ -48,7 +48,7 @@ public class SpotifyController {
     
     String client_id = System.getenv("SPOTIFY_CLIENT_ID");
     String client_secret = System.getenv("SPOTIFY_CLIENT_SECRET");
-    String redirect_uri = "http://localhost:8080/callback";
+    String redirect_uri = "https://harmoniq-1.onrender.com/callback";
     final String stateKey = "spotify_auth_state";
     
     
