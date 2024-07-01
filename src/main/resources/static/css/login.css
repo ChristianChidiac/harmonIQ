@@ -61,6 +61,11 @@ header {
     width: 30px;
 }
 
+a {
+    color: white;
+    text-decoration: none;
+}
+
 footer {
     display: flex;
     justify-content: center;
