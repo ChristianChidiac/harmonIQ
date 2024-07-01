@@ -31,22 +31,21 @@ import io.github.cdimascio.dotenv.Dotenv;
 @Controller
 public class SpotifyController {
 
-    @Value("${redirect.url}")
-    String redirect_uri;
-
-    String client_id, client_secret;
+    String client_id, client_secret, redirect_uri;
 
     public SpotifyController() {
     if("development".equals(System.getenv("ENVIRONMENT")))
 {
         client_id = System.getenv("SPOTIFY_CLIENT_ID");
         client_secret = System.getenv("SPOTIFY_CLIENT_SECRET");
+        redirect_uri = System.getenv("REDIRECT_URI");
 }
 else
 {
     Dotenv dotenv = Dotenv.configure().load();
         client_id = dotenv.get("SPOTIFY_CLIENT_ID");
         client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
+        redirect_uri = dotenv.get("REDIRECT_URI");
 }
     }
 
