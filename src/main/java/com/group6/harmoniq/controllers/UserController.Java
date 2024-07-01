@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Map;
 
 @Controller
-public class OAuthController {
+public class UserController {
 
     @Autowired
     private UserRepository userRepository;
@@ -16,9 +16,8 @@ public class OAuthController {
         String spotifyId = oauthData.get("spotify_id");
         String displayName = oauthData.get("display_name");
         String email = oauthData.get("email");
-        String accessToken = oauthData.get("access_token");
-        String refreshToken = oauthData.get("refresh_token");
-        int expiresIn = Integer.parseInt(oauthData.get("expires_in"));
+        int followers = oauthData.get("followers");
+        String imageUrl = oauthData.get("imageUrl");
 
         // Check if user already exists
         User user = userRepository.findBySpotifyId(spotifyId);
@@ -27,15 +26,11 @@ public class OAuthController {
             user.setSpotifyId(spotifyId);
             user.setDisplayName(displayName);
             user.setEmail(email);
-            user.setAccessToken(accessToken);
-            user.setRefreshToken(refreshToken);
-            user.setExpiresIn(expiresIn);
+            user.setFollowers(followers);
+            user.setImageUrl(imageUrl);
             userRepository.save(user);
         } else {
             // Update existing user tokens and expiration
-            user.setAccessToken(accessToken);
-            user.setRefreshToken(refreshToken);
-            user.setExpiresIn(expiresIn);
             userRepository.save(user);
         }
 

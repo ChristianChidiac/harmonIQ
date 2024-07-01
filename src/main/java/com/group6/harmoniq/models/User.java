@@ -27,16 +27,12 @@ public class User {
 
     private String email;
 
+    private int followers;
+
     private int quizScore;
 
-    // Allows access to user data
-    private String accessToken;
+    private String imageUrl;
 
-    // Refreshes token without requiring user reauthorization every hour
-    private String refreshToken;
-
-    // How long access token is valid
-    private int expiresIn;
 
     // Default is regular user
     private Boolean isAdmin = false;
@@ -48,13 +44,14 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String spotifyId, String displayName, String email, String accessToken, String refreshToken, int expiresIn, Boolean isAdmin) {
+    public User(String spotifyId, String displayName, String email, int followers, int quizScore,  String imageUrl, Boolean isAdmin) {
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.expiresIn = expiresIn;
+        this.followers = followers;
+        this.quizScore = quizScore;
+        this.imageUrl = imageUrl;
+
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
@@ -90,30 +87,6 @@ public class User {
         this.email = email;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public int getExpiresIn() {
-        return expiresIn;
-    }
-
-    public void setExpiresIn(int expiresIn) {
-        this.expiresIn = expiresIn;
-    }
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -132,6 +105,22 @@ public class User {
 
     public void setQuizScore(int quizScore) {
         this.quizScore = quizScore;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
 
