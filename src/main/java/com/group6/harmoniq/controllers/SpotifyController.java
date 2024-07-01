@@ -1,22 +1,3 @@
-
-// Copyright 2012-2016 Spotify AB
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//Original Source: https://github.com/spotify/web-api-examples
-//This file was modified from the original source by Christian Chidiac on June 30, 2024.
-//This code was converted from JavaScript to Java by Christian Chidiac on June 30, 2024.
-
 package com.group6.harmoniq.controllers;
 
 import java.security.SecureRandom;
@@ -27,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -42,33 +24,43 @@ import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
+
 
 @Controller
 public class SpotifyController {
-    
-    String client_id = System.getenv("SPOTIFY_CLIENT_ID");
-    String client_secret = System.getenv("SPOTIFY_CLIENT_SECRET");
-    String redirect_uri = "https://harmoniq-1.onrender.com/callback";
+   
+    Dotenv dotenv = Dotenv.configure().load();
+    String client_id = dotenv.get("SPOTIFY_CLIENT_ID");
+    String client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
+    String spotifyUrl = "https://accounts.spotify.com";
     final String stateKey = "spotify_auth_state";
-    
-    
+    String redirect_uri;
+
+    public SpotifyController(@Value("${main.url}") String main_url) {
+        this.redirect_uri = main_url + "/callback";
+    }
+     
     //redirects to Spotify API's Authorization endpoint
    @GetMapping("/login")
+  
    public String login(HttpServletResponse response) {
+    
     SecureRandom secureRandom;
     try {
         secureRandom = SecureRandom.getInstanceStrong();
     } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-
+    
         String state = generateRandomString(secureRandom, 16);
         Cookie stateCookie = new Cookie(stateKey, state);
         response.addCookie(stateCookie);
         String scope = "user-read-private user-read-email user-follow-read";
 
         //Requesting Authorization
-        String authUrl = UriComponentsBuilder.fromHttpUrl("https://accounts.spotify.com/authorize")
+        String authUrl = UriComponentsBuilder.fromHttpUrl(spotifyUrl + "/authorize")
             .queryParam("response_type", "code")
             .queryParam("client_id", client_id)
             .queryParam("scope", scope)
@@ -90,7 +82,7 @@ public class SpotifyController {
         } else {
        
             response.addCookie(new Cookie(stateKey, null));      
-            String tokenUrl = "https://accounts.spotify.com/api/token";
+            String tokenUrl = spotifyUrl + "/api/token";
             String authHeader = "Basic " + Base64.getEncoder().encodeToString((client_id + ":" + client_secret).getBytes(StandardCharsets.UTF_8));
 
             Map<String, String> bodyParams = new HashMap<>();
@@ -103,12 +95,12 @@ public class SpotifyController {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set("Authorization", authHeader);
        
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.add("code", code);
-            map.add("redirect_uri", redirect_uri);
-            map.add("grant_type", "authorization_code");
+            MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+            requestBody.add("code", code);
+            requestBody.add("redirect_uri", redirect_uri);
+            requestBody.add("grant_type", "authorization_code");
 
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<Map> responseEntity = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
