@@ -30,17 +30,28 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @Controller
 public class SpotifyController {
-   
-    Dotenv dotenv = Dotenv.configure().load();
-    String client_id = dotenv.get("SPOTIFY_CLIENT_ID");
-    String client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
-    String spotifyUrl = "https://accounts.spotify.com";
-    final String stateKey = "spotify_auth_state";
+
+    @Value("${redirect.url}")
     String redirect_uri;
 
-    public SpotifyController(@Value("${main.url}") String main_url) {
-        this.redirect_uri = main_url + "/callback";
+    String client_id, client_secret;
+
+    public SpotifyController() {
+    if("development".equals(System.getenv("ENVIRONMENT")))
+{
+        client_id = System.getenv("SPOTIFY_CLIENT_ID");
+        client_secret = System.getenv("SPOTIFY_CLIENT_SECRET");
+}
+else
+{
+    Dotenv dotenv = Dotenv.configure().load();
+        client_id = dotenv.get("SPOTIFY_CLIENT_ID");
+        client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
+}
     }
+
+    String spotifyUrl = "https://accounts.spotify.com";
+    final String stateKey = "spotify_auth_state";
      
     //redirects to Spotify API's Authorization endpoint
    @GetMapping("/login")
