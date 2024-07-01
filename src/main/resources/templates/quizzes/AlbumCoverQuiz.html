@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,22 +8,16 @@
 <body>
     <header>
         <div>
-            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo" th:width="150px" th:height="150px"></a>
         </div>
-    <form id="quizForm">
-        <div class="quiz-container">
-      
-          <div id="question1" class="question">
-            <img src="####" alt="Question 1 Image" class="question-image">
-            <h2>Question 1:</h2>
-            <p>What album's cover is this?</p>
-            <input type="radio" name="q1" value="a">Taylor Swift<br>
-            <input type="radio" name="q1" value="b">Sabrina Carpenter<br>
-            <input type="radio" name="q1" value="c">Dua Lipa<br>
-            <input type="radio" name="q1" value="d">Ariana Grande<br>
-          </div>
-      
+    <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post">
+        <input type="hidden" name="questionId" th:value="${questionId}" />
+        <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image" th:width="150px" th:height="150px">
+        <div th:each="option : ${options}">
+            <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" />
+            <label th:for="${option}" th:text="${option}"></label>
         </div>
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>

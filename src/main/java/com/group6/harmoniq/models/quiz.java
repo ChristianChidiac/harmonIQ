@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "quizzes")
-public class quiz {
+public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String question;
+    private String question_path;
     private String answer;
     private String option1;
     private String option2;
     private String option3;
 
-    public quiz() {
+    public Quiz() {
     }
-    public quiz(String question, String answer, String option1, String option2, String option3) {
-        this.question = question;
+    public Quiz(String question_path, String answer, String option1, String option2, String option3) {
+        this.question_path = question_path;
         this.answer = answer;
         this.option1 = option1;
         this.option2 = option2;
@@ -26,11 +26,11 @@ public class quiz {
     public Long getId() {
         return id;
     }
-    public String getQuestion() {
-        return question;
+    public String getQuestionPath() {
+        return question_path;
     }
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setQuestionPath(String question_path) {
+        this.question_path = question_path;
     }
     public String getAnswer() {
         return answer;
