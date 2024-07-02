@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/callback")
+    @GetMapping("/add")
     public String callback(Map<String, String> oauthData) {
         String spotifyId = oauthData.get("spotify_id");
         String displayName = oauthData.get("display_name");
