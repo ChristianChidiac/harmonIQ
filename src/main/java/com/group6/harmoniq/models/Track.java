@@ -1,21 +1,25 @@
 package com.group6.harmoniq.models;
 
-public class Artist {
+import java.util.List;
+
+public class Track {
     private long uId;
     private String spotifyId;
     private String name;
     private String spotifyUrl;
-    private String imageUrl;
+    private String albumCoverUrl;
+    private List<Artist> artists;
 
-    public Artist() {
+    public Track() {
     }
 
-    public Artist(long uId, String spotifyId, String name, String spotifyUrl, String imageUrl) {
+    public Track(long uId, String spotifyId, String name, String spotifyUrl, String albumCoverUrl, List<Artist> artists) {
         this.uId = uId;
         this.spotifyId = spotifyId;
         this.name = name;
         this.spotifyUrl = spotifyUrl;
-        this.imageUrl = imageUrl;
+        this.albumCoverUrl = albumCoverUrl;
+        this.artists = artists;
     }
 
     public long getuId() {
@@ -50,12 +54,20 @@ public class Artist {
         this.spotifyUrl = spotifyUrl;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getAlbumCoverUrl() {
+        return albumCoverUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAlbumCoverUrl(String albumCoverUrl) {
+        this.albumCoverUrl = albumCoverUrl;
+    }
+
+    public List<Artist> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
     }
 
     
