@@ -3,14 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Pick your Quiz</title>
+    <link rel="stylesheet" href="css/quiz-menu.css">
 </head>
 <body>
-    <h1>Choose type of quiz</h1>
-    <table>
-        <tr>
-            <td><a href="/quizzes/AlbumCoverQuiz">Album Cover Quiz</a></td>
-        </tr>
-    </table>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="images/harmoniqlogo.png" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="quiz-section">
+            <h1>PICK YOUR QUIZ</h1>
+            <div class="quiz-cards">
+                <div class="quiz-card">
+                    <a href="/quizzes/AlbumCoverQuiz">
+                        <div class="quiz-card-title">Album Cover</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
