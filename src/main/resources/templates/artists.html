@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Followed Artists:</h1>
+    <ul>
+        <li th:if="${error}">
+            <span th:text="${error}"></span>
+        </li>
+
+
+        <li th:each="artist : ${artists}">
+            <span th:text="${artist.name}"></span>
+        </li>
+    </ul>
+
+     <a href="/logout" id = "logoutButton">Logout</a>
+
+<script>
+
+var logoutButton = document.getElementById("logoutButton");
+logoutButton.addEventListener('click', userLogout);
+
+function userLogout(evt) {
+
+const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
+setTimeout(() => logoutPopup.close(), 500);
+evt.preventDefault();
+setTimeout(() => location.reload(), 500);
+}
+
+
+
+</script>
+
+
+</body>
+</html>
