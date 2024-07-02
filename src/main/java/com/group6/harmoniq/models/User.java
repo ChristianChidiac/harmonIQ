@@ -7,18 +7,20 @@ public class User {
     private int followers;
     private String id;
     private String imageUrl;
+    private Artist topArtist;
 
     public User() {
     }
 
     public User(String displayName, String email, String externalSpotifyUrl, int followers, String id,
-            String imageUrl) {
+            String imageUrl, Artist topArtist) {
         this.displayName = displayName;
         this.email = email;
         this.externalSpotifyUrl = externalSpotifyUrl;
         this.followers = followers;
         this.id = id;
         this.imageUrl = imageUrl;
+        this.topArtist = topArtist;
     }
 
     public String getDisplayName() {
@@ -68,4 +70,13 @@ public class User {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public Artist getTopArtist() {
+        return topArtist;
+    }
+
+    public void setTopArtist(Artist topArtist) {
+        this.topArtist = topArtist;
+    }
+
 }
