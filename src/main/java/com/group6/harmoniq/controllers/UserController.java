@@ -4,6 +4,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
 
@@ -23,7 +24,6 @@ public class UserController {
         int followers = Integer.parseInt(oauthData.get("followers"));
         String imageUrl = oauthData.get("imageUrl");
 
-        // Check if user already exists
         User user = userRepository.findBySpotifyId(spotifyId);
         if (user == null) {
             user = new User();
@@ -34,11 +34,9 @@ public class UserController {
             user.setImageUrl(imageUrl);
             userRepository.save(user);
         } else {
-            // Update existing user tokens and expiration
             userRepository.save(user);
         }
 
-        // Redirect to the desired page
         return "redirect:/";
     }
 }
