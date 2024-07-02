@@ -9,10 +9,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-    // callback mapping is placeholder
+
     @GetMapping("/callback")
     public String callback(Map<String, String> oauthData) {
-        // Extract necessary data from OAuth response
         String spotifyId = oauthData.get("spotify_id");
         String displayName = oauthData.get("display_name");
         String email = oauthData.get("email");

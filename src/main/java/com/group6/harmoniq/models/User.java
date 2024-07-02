@@ -29,8 +29,6 @@ public class User {
 
     private int followers;
 
-    private int quizScore;
-
     private String imageUrl;
 
 
@@ -41,21 +39,26 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private final Date createdAt = new Date();
 
+    @Column(updatable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt = new Date();
+
+    
+
     // Constructors
     public User() {}
 
-    public User(String spotifyId, String displayName, String email, int followers, int quizScore,  String imageUrl, Boolean isAdmin) {
+    public User(long uid, String spotifyId, String displayName, String email, int followers,  String imageUrl, Boolean isAdmin) {
+        this.uid = uid;
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
         this.followers = followers;
-        this.quizScore = quizScore;
         this.imageUrl = imageUrl;
-
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
-    public Long getUId() {
+    public long getUId() {
         return uid;
     }
 
@@ -99,14 +102,6 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
-    public int getQuizScore() {
-        return quizScore;
-    }
-
-    public void setQuizScore(int quizScore) {
-        this.quizScore = quizScore;
-    }
-
     public int getFollowers() {
         return followers;
     }
@@ -121,6 +116,14 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 
