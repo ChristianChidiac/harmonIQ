@@ -1,8 +1,13 @@
+package com.group6.harmoniq.controllers;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.group6.harmoniq.models.User;
+import com.group6.harmoniq.models.UserRepository;
 
-import java.util.Map;
+
 
 @Controller
 public class UserController {
@@ -15,7 +20,7 @@ public class UserController {
         String spotifyId = oauthData.get("spotify_id");
         String displayName = oauthData.get("display_name");
         String email = oauthData.get("email");
-        int followers = oauthData.get("followers");
+        int followers = Integer.parseInt(oauthData.get("followers"));
         String imageUrl = oauthData.get("imageUrl");
 
         // Check if user already exists
