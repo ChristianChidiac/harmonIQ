@@ -12,7 +12,7 @@ _Iteration: 1_
 
 # Description:
 
-**harmonIQ** is an innovative web application designed to provide music enthusiasts with entertainment. Users can log in with their Spotify account to access personalised quizzes based on their listening history, tracks, and library. Additionally, users can view how their quiz score ranks compared to others on a global leader-board. On top of this, harmonIQ users can generate playlist via a communal voting system, allowing them to share their music passion with friends and family. With features like displaying user statistics, collaborative playlist creation, and generating quizzes personalised to the user, harmonIQ caters to anyone passionate about music, offering a unique platform to enjoy and celebrate their love for music.
+**harmonIQ** is an innovative web application designed to provide music enthusiasts with entertainment. Users can log in with their Spotify account to access personalised quizzes based on their listening histor2y, tracks, and library. Additionally, users can view how their quiz score ranks compared to others on a global leader-board. On top of this, harmonIQ users can generate playlist via a communal voting system, allowing them to share their music passion with friends and family. With features like displaying user statistics, collaborative playlist creation, and generating quizzes personalised to the user, harmonIQ caters to anyone passionate about music, offering a unique platform to enjoy and celebrate their love for music.
 
 # Requirements and Specifications:
 
@@ -25,10 +25,10 @@ _Iteration: 1_
 - [x] User is able to see some information related to their Spotify account, such as top tracks.
 - [ ] Administrative type user accounts, with special app privileges.
 	- Demo of Admin page and user list: 
-<video width="640" height="360" controls>
-	<source src="./assets/Admin%20Screencast.mp4" type="video/mp4">
-</video>
+	
+![](./assets/admin-screencast.gif)
 - [x] User is able to logout of their account and is redirected to login landing page.
+
 
 ## User Requirements:
 
