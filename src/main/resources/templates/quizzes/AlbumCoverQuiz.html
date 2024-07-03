@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Album</title>
+    <link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
 </head>
 <body>
     <header>
-        <div>
-            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo" th:width="150px" th:height="150px"></a>
+        <div class = "logo">
+            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
         </div>
-    <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post">
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
         <input type="hidden" name="questionId" th:value="${questionId}" />
         <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image" th:width="150px" th:height="150px">
         <div th:each="option : ${options}">
