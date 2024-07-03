@@ -3,6 +3,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: #DDFFDB;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.wrapper {
+    flex: 1;
 }
 
 header {
@@ -91,4 +98,19 @@ p {
 p span {
     font-weight: bold;
     color: #9AEC98;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.logout-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
 }
