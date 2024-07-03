@@ -8,64 +8,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <div class="logo">
-                <a href="/"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/quiz.html">Quiz</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main >
-            <p th:if="${error}">
-                <span th:text="${error}"></span>
-            </p>
-            <div class="profile-section">
-                <img class="profile-pic" th:src="${user.imageUrl}" th:alt="${user.displayName}">
-                <h1 th:text="${user.displayName}"></h1>
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-number" th:text="${user.followers}"></span>
-                        <span class="stat-label">Followers</span>
-                    </div>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/quiz.html">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main >
+        <p th:if="${error}">
+            <span th:text="${error}"></span>
+        </p>
+        <div class="profile-section">
+            <img class="profile-pic" th:src="${user.imageUrl}" th:alt="${user.displayName}">
+            <h1 th:text="${user.displayName}"></h1>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number" th:text="${user.followers}"></span>
+                    <span class="stat-label">Followers</span>
                 </div>
             </div>
-            <div class="content-section">
-                <div class="card">
-                    <a th:href="${user.topArtist.spotifyUrl}" target="_blank">
-                        <img th:src="${user.topArtist.imageUrl}" th:alt="${user.topArtist.name}">
-                        <p class="subtext">TOP ARTIST</p> 
-                        <p th:text="${user.topArtist.name}"></p>
-                    </a>
-                </div>
-                <div class="card">
-                    <a th:href="${user.topTrack.spotifyUrl}" target="_blank">
-                        <img th:src="${user.topTrack.albumCoverUrl}" th:alt="${user.topTrack.name}">
-                        <p class="subtext">TOP TRACK</p>
-                        <p th:text="${user.topTrack.name}"></p>
-                    </a>
-                </div>
+        </div>
+        <div class="content-section">
+            <div class="card">
+                <a th:href="${user.topArtist.spotifyUrl}" target="_blank">
+                    <img th:src="${user.topArtist.imageUrl}" th:alt="${user.topArtist.name}">
+                    <p class="subtext">TOP ARTIST</p> 
+                    <p th:text="${user.topArtist.name}"></p>
+                </a>
             </div>
-        </main>
-    </div>
+            <div class="card">
+                <a th:href="${user.topTrack.spotifyUrl}" target="_blank">
+                    <img th:src="${user.topTrack.albumCoverUrl}" th:alt="${user.topTrack.name}">
+                    <p class="subtext">TOP TRACK</p>
+                    <p th:text="${user.topTrack.name}"></p>
+                </a>
+            </div>
+        </div>
+    </main>
     <footer>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
-</body>
-<script>
-    var logoutButton = document.getElementById("logoutButton");
-    logoutButton.addEventListener('click', userLogout);
-    
-    function userLogout(evt) {
-        const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
-        setTimeout(() => logoutPopup.close(), 500);
+    <script>
+        var logoutButton = document.getElementById("logoutButton");
+        logoutButton.addEventListener('click', userLogout);
+        
+        function userLogout(evt) {
+            const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
+            setTimeout(() => logoutPopup.close(), 500);
 
-        evt.preventDefault();
-        setTimeout(() => location.reload(), 500);
-    }
-</script>
+            evt.preventDefault();
+            setTimeout(() => location.reload(), 500);
+        }
+        </script>
+</body>
 </html>
