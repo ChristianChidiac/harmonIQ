@@ -16,13 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.group6.harmoniq.models.Artist;
+import com.group6.harmoniq.models.Track;
+import com.group6.harmoniq.models.User;
+
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-
 import io.github.cdimascio.dotenv.Dotenv;
 
 @Controller
@@ -34,6 +38,8 @@ public class SpotifyController {
 
     String spotifyUrl = "https://accounts.spotify.com";
     final String stateKey = "spotify_auth_state";
+
+    private String accessToken;
 
     public SpotifyController() {
         if ("development".equals(System.getenv("ENVIRONMENT"))) {
@@ -47,6 +53,10 @@ public class SpotifyController {
             client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
             redirect_uri = dotenv.get("REDIRECT_URI");
         }
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     // redirects to Spotify API's Authorization endpoint
@@ -63,7 +73,7 @@ public class SpotifyController {
         String state = generateRandomString(secureRandom, 16);
         Cookie stateCookie = new Cookie(stateKey, state);
         response.addCookie(stateCookie);
-        String scope = "user-read-private user-read-email user-follow-read";
+        String scope = "user-read-private user-read-email user-follow-read user-top-read";
 
         // Requesting Authorization
         String authUrl = UriComponentsBuilder.fromHttpUrl(spotifyUrl + "/authorize")
@@ -81,9 +91,9 @@ public class SpotifyController {
     // Requests an access token using user client_id and client_secret
     @GetMapping("/callback")
     public String callback(@RequestParam("code") String code, @RequestParam("state") String state, @CookieValue(stateKey) String storedState, HttpServletResponse response, Model model) {
-
+     
         if (state == null || !state.equals(storedState)) {
-            return "redirect:/login.html";
+            return "redirect:/index.html";
         } else {
 
             response.addCookie(new Cookie(stateKey, null));
@@ -110,14 +120,24 @@ public class SpotifyController {
             ResponseEntity<Map> responseEntity = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                Map<String, Object> body = responseEntity.getBody();
-                String access_token = (String) body.get("access_token");
 
-                getFollowedArtists(access_token, model);
+                try {
+                    Map<String, Object> body = responseEntity.getBody();
+                    accessToken = (String) body.get("access_token");
+    
+                    User user = getUserProfile(accessToken);
+                    user.setTopArtist(getTopArtist(accessToken));
+                    user.setTopTrack(getTopTrack(accessToken));
 
-                return "artists";
+                    model.addAttribute("user", user);
+    
+                } catch (Exception e) {
+                    model.addAttribute("error", e.getMessage());
+                }
+
+                return "profile";
             } else {
-                return "redirect:/login.html";
+                return "redirect:/index.html";
             }
         }
     }
@@ -128,19 +148,16 @@ public class SpotifyController {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomizedBytes);
     }
 
-    // Requests followed artists from Spotify API's Followed Artists endpoint, and
-    // adds that data to a model
-    private void getFollowedArtists(String access_token, Model model) {
+    private void getFollowedArtists(String accessToken, Model model) {
 
         String url = "https://api.spotify.com/v1/me/following?type=artist";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + access_token);
+        headers.set("Authorization", "Bearer " + accessToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
-
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
             Map<String, Object> artistsData = (Map<String, Object>) response.getBody().get("artists");
             List<Map<String, Object>> items = (List<Map<String, Object>>) artistsData.get("items");
@@ -148,6 +165,106 @@ public class SpotifyController {
             model.addAttribute("artists", items);
         } catch (HttpClientErrorException e) {
             model.addAttribute("error", "Failed to get followed artists");
+        }
+    }
+
+    private User getUserProfile(String accessToken) throws Exception {
+
+        String url = "https://api.spotify.com/v1/me";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+
+            User user = new User();
+            user.setDisplayName((String) response.getBody().get("display_name"));
+
+            var images = ((List<Map<String, Object>>) response.getBody().get("images"));
+            if (images.size() > 0) {
+                user.setImageUrl((String) images.get(1).get("url"));
+            }
+
+            var followers = (Map<String, Object>) response.getBody().get("followers");
+            user.setFollowers((int) followers.get("total"));
+
+            return user;
+        } catch (HttpClientErrorException e) {
+            throw new Exception("Failed to get user profile", e);
+        }
+    }
+
+    private Artist getTopArtist(String accessToken) throws Exception {
+
+        String url = "https://api.spotify.com/v1/me/top/artists?limit=1";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+
+            Map<String, Object> topArtistJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
+
+            var topArtist = new Artist();
+            topArtist.setName((String) topArtistJson.get("name"));
+            
+            var externalUrls = (Map<String, Object>) topArtistJson.get("external_urls");
+            topArtist.setSpotifyUrl((String) externalUrls.get("spotify"));
+            
+            var images = ((List<Map<String, Object>>) topArtistJson.get("images"));
+            if (images.size() > 0) {
+                topArtist.setImageUrl((String) images.get(0).get("url"));
+            }
+
+            return topArtist;
+        } catch (HttpClientErrorException e) {
+            throw new Exception("Failed to get top artists", e );
+        }
+    }
+
+    private Track getTopTrack(String accessToken) throws Exception {
+
+        String url = "https://api.spotify.com/v1/me/top/tracks?limit=1";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+            
+            Map<String, Object> topTrackJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
+
+            var topTrack = new Track();
+
+            topTrack.setName((String) topTrackJson.get("name"));
+
+            var artistsJson = (List<Map<String, Object>>) topTrackJson.get("artists");
+            var artists = artistsJson.stream().map(artistJson -> {
+                var artist = new Artist();
+                artist.setName((String) artistJson.get("name"));
+                return artist;
+            }).toList();
+            topTrack.setArtists(artists);
+
+            var externalUrls = (Map<String, Object>) topTrackJson.get("external_urls");
+            topTrack.setSpotifyUrl((String) externalUrls.get("spotify"));
+
+            var album = (Map<String, Object>) topTrackJson.get("album");
+            var albumCoverArtUrl = ((List<Map<String, Object>>) album.get("images")).get(0).get("url");
+            topTrack.setAlbumCoverUrl((String) albumCoverArtUrl);
+
+            return topTrack;
+        } catch (HttpClientErrorException e) {
+            throw new Exception("Failed to get top tracks", e);
         }
     }
 }
