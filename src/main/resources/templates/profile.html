@@ -18,6 +18,9 @@
         </nav>
     </header>
     <main >
+        <p th:if="${error}">
+            <span th:text="${error}"></span>
+        </p>
         <div class="profile-section">
             <img class="profile-pic" th:src="${user.imageUrl}" th:alt="${user.displayName}">
             <h1 th:text="${user.displayName}"></h1>
@@ -46,7 +49,19 @@
         </div>
     </main>
     <footer>
-        <button class="logout-button">Log Out</button>
+        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
+    <script>
+        var logoutButton = document.getElementById("logoutButton");
+        logoutButton.addEventListener('click', userLogout);
+        
+        function userLogout(evt) {
+            const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
+            setTimeout(() => logoutPopup.close(), 500);
+
+            evt.preventDefault();
+            setTimeout(() => location.reload(), 500);
+        }
+        </script>
 </body>
 </html>
