@@ -7,42 +7,25 @@
     <link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <div class = "logo">
-                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/quiz.html">Quiz</a></li>
-                </ul>
-            </nav>
-        </header>
-        <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
-            <input type="hidden" name="questionId" th:value="${questionId}" />
-            <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image" th:width="150px" th:height="150px">
-            <div th:each="option : ${options}">
-                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
-                <label th:for="${option}" th:text="${option}"></label>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-    <footer>
-        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
-    </footer>
+    <header>
+        <div class = "logo">
+            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/quiz.html">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
+        <input type="hidden" name="questionId" th:value="${questionId}" />
+        <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image" th:width="150px" th:height="150px">
+        <div th:each="option : ${options}">
+            <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
+            <label th:for="${option}" th:text="${option}"></label>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
 </body>
-<script>
-    var logoutButton = document.getElementById("logoutButton");
-    logoutButton.addEventListener('click', userLogout);
-    
-    function userLogout(evt) {
-        const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
-        setTimeout(() => logoutPopup.close(), 500);
-
-        evt.preventDefault();
-        setTimeout(() => location.reload(), 500);
-    }
-</script>
 </html>
