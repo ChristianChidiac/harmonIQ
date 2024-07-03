@@ -30,17 +30,17 @@
         </div>
         <div class="content-section">
             <div class="card">
-                <a href="https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02" target="_blank">
-                    <img src="https://i.scdn.co/image/ab67616100005174e672b5f553298dcdccb0e676" alt="Taylor Swift">
-                    <p class="subtext">TOP ARTIST</p>
-                    <p>Taylor Swift</p>
+                <a th:href="${user.topArtist.spotifyUrl}" target="_blank">
+                    <img th:src="${user.topArtist.imageUrl}" th:alt="${user.topArtist.name}">
+                    <p class="subtext">TOP ARTIST</p> 
+                    <p th:text="${user.topArtist.name}"></p>
                 </a>
             </div>
             <div class="card">
-                <a href="https://open.spotify.com/track/4IR5cCTkL4DjgJwtSijbjL" target="_blank">
-                    <img src="https://i.scdn.co/image/ab67616d00001e025aa9dbc2ad20c84e508fcd25" alt="Pardes Katenda by Adnan Dhool">
+                <a th:href="${user.topTrack.spotifyUrl}" target="_blank">
+                    <img th:src="${user.topTrack.albumCoverUrl}" th:alt="${user.topTrack.name}">
                     <p class="subtext">TOP TRACK</p>
-                    <p>Pardes Katenda by Adnan Dhool</p>
+                    <p th:text="${user.topTrack.name}"></p>
                 </a>
             </div>
         </div>
