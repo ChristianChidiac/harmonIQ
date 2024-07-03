@@ -1,7 +1,6 @@
 
 # <u>harmonIQ - Design Document</u>
 
-
 _Iteration: 1_
 
 # Links and Credentials:
@@ -26,9 +25,9 @@ _Iteration: 1_
 - [x] User is able to see some information related to their Spotify account, such as top tracks.
 - [ ] Administrative type user accounts, with special app privileges.
 	- Demo of Admin page and user list: 
-	<video width="640" height="360" controls>
-  		<source src="./assets/Admin%20Screencast.mp4" type="video/mp4">
-	</video>
+<video width="640" height="360" controls>
+	<source src="./assets/Admin%20Screencast.mp4" type="video/mp4">
+</video>
 - [x] User is able to logout of their account and is redirected to login landing page.
 
 ## User Requirements:
