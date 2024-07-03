@@ -25,6 +25,7 @@ public class UserController {
         user.setImageUrl("https://i.scdn.co/image/ab6775700000ee850ff63f304a0cacb691011c34");
         user.setFollowers(10);
         user.setTopArtist(spotifyService.getTopArtist());
+        user.setTopTrack(spotifyService.getTopTrack());
 
         model.addAttribute("user", user);
 
