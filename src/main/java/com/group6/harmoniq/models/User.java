@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "users")
@@ -33,8 +34,10 @@ public class User {
 
     private String externalSpotifyUrl;
 
+    @Transient
     private Artist topArtist;
 
+    @Transient
     private Track topTrack;
 
     // Default is regular user
