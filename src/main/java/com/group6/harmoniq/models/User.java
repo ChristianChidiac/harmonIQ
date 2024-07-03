@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "users")
@@ -31,6 +32,13 @@ public class User {
 
     private String imageUrl;
 
+    private String externalSpotifyUrl;
+
+    @Transient
+    private Artist topArtist;
+
+    @Transient
+    private Track topTrack;
 
     // Default is regular user
     private Boolean isAdmin = false;
@@ -43,27 +51,23 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt = new Date();
 
-    
-
     // Constructors
     public User() {}
 
-    public User(long uid, String spotifyId, String displayName, String email, int followers,  String imageUrl, Boolean isAdmin) {
-        this.uid = uid;
+    public User(String spotifyId, String displayName, String email, int followers,  String imageUrl, String externalSpotifyUrl, Artist topArtist, Track topTrack, Boolean isAdmin) {
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
         this.followers = followers;
         this.imageUrl = imageUrl;
+        this.externalSpotifyUrl = externalSpotifyUrl;
+        this.topArtist = topArtist;
+        this.topTrack = topTrack;
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
     public long getUId() {
         return uid;
-    }
-
-    public void setUId(long id) {
-        this.uid = id;
     }
 
     public String getSpotifyId() {
@@ -112,6 +116,30 @@ public class User {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getExternalSpotifyUrl() {
+        return externalSpotifyUrl;
+    }
+
+    public void setExternalSpotifyUrl(String externalSpotifyUrl) {
+        this.externalSpotifyUrl = externalSpotifyUrl;
+    }
+
+    public Artist getTopArtist() {
+        return topArtist;
+    }
+
+    public void setTopArtist(Artist topArtist) {
+        this.topArtist = topArtist;
+    }
+
+    public Track getTopTrack() {
+        return topTrack;
+    }
+
+    public void setTopTrack(Track topTrack) {
+        this.topTrack = topTrack;
     }
 
     public void setImageUrl(String imageUrl) {
