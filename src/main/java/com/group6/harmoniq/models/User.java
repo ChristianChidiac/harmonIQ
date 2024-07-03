@@ -8,12 +8,13 @@ public class User {
     private String id;
     private String imageUrl;
     private Artist topArtist;
+    private Track topTrack;
 
     public User() {
     }
 
     public User(String displayName, String email, String externalSpotifyUrl, int followers, String id,
-            String imageUrl, Artist topArtist) {
+            String imageUrl, Artist topArtist, Track topTrack) {
         this.displayName = displayName;
         this.email = email;
         this.externalSpotifyUrl = externalSpotifyUrl;
@@ -21,6 +22,7 @@ public class User {
         this.id = id;
         this.imageUrl = imageUrl;
         this.topArtist = topArtist;
+        this.topTrack = topTrack;
     }
 
     public String getDisplayName() {
@@ -77,6 +79,14 @@ public class User {
 
     public void setTopArtist(Artist topArtist) {
         this.topArtist = topArtist;
+    }
+
+    public Track getTopTrack() {
+        return topTrack;
+    }
+
+    public void setTopTrack(Track topTrack) {
+        this.topTrack = topTrack;
     }
 
 }
