@@ -27,7 +27,7 @@ _Iteration: 1_
 - [ ] Administrative type user accounts, with special app privileges.
 	- Demo of Admin page and user list: 
 	<video width="640" height="360" controls>
-  	<source src="./assets/Admin%20Screencast.mp4" type="video/mp4">
+  		<source src="./assets/Admin%20Screencast.mp4" type="video/mp4">
 	</video>
 - [x] User is able to logout of their account and is redirected to login landing page.
 
