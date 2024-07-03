@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
 <body>
+    <header>
+        <div class = "logo">
+            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
     <h1>Quiz Results</h1>
     <p>Your Score: <span th:text="${score}"></span></p> 
 </body>
