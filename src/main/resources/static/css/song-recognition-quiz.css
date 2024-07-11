@@ -45,11 +45,11 @@ nav ul li a {
     padding: 2rem;
 }
 
-form audio {
+form .audio-controls {
     max-width: 100%;
     border: 2px solid black;
     border-radius: 50px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 form div {
