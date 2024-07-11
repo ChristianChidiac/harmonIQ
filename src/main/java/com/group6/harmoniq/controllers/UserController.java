@@ -1,10 +1,13 @@
 package com.group6.harmoniq.controllers;
-import java.util.Map;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
@@ -25,31 +28,6 @@ public class UserController {
         this.spotifyService = spotifyService;
     }
 
-
-    @GetMapping("/add")
-    public String callback(Map<String, String> oauthData) {
-        String spotifyId = oauthData.get("spotify_id");
-        String displayName = oauthData.get("display_name");
-        String email = oauthData.get("email");
-        int followers = Integer.parseInt(oauthData.get("followers"));
-        String imageUrl = oauthData.get("imageUrl");
-
-        User user = userRepository.findBySpotifyId(spotifyId);
-        if (user == null) {
-            user = new User();
-            user.setSpotifyId(spotifyId);
-            user.setDisplayName(displayName);
-            user.setEmail(email);
-            user.setFollowers(followers);
-            user.setImageUrl(imageUrl);
-            userRepository.save(user);
-        } else {
-            userRepository.save(user);
-        }
-
-        return "redirect:/";
-    }
-
     @GetMapping("/profile")
     public String getProfile(Model model, HttpServletRequest request, HttpSession session) {
         User user = new User();
@@ -63,4 +41,32 @@ public class UserController {
 
         return "profile";
     }
+
+    @GetMapping("/admin/users")
+    public String listAllUsers(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser != null && currentUser.getIsAdmin()) {
+            List<User> users = userRepository.findAll();
+            model.addAttribute("users", users);
+            return "userList";
+        } else {
+            return "redirect:/access-denied"; 
+        }
+    }
+
+    @PostMapping("/admin/setAdmin")
+    public String setAdminStatus(@RequestParam("spotifyId") String spotifyId, @RequestParam("isAdmin") boolean isAdmin, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser != null && currentUser.getIsAdmin()) {
+            User user = userRepository.findBySpotifyId(spotifyId);
+            if (user != null) {
+                user.setIsAdmin(isAdmin);
+                userRepository.save(user);
+            }
+            return "redirect:/admin/users";
+        } else {
+            return "redirect:/access-denied"; // Redirect to an access-denied page
+        }
+    }
+    
 }
