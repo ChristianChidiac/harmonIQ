@@ -51,7 +51,7 @@ public class QuizController {
                 return "quizzes/errorPage"; // Redirect to an error page or display a message
             }
 
-            List<String> options = Arrays.asList(quiz.getAnswer(), quiz.getOption1(), quiz.getOption2(), quiz.getOption3());
+            List<String> options = quiz.getOptions();
             Collections.shuffle(options);
 
             model.addAttribute("quiz", quiz);

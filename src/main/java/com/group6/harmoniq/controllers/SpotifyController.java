@@ -267,4 +267,53 @@ public class SpotifyController {
             throw new Exception("Failed to get top tracks", e);
         }
     }
+
+    private List<Track> getTopTracks(String accessToken) throws Exception {
+
+        String url = "https://api.spotify.com/v1/me/top/tracks?limit=10";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+            
+            List<Map<String, Object>> topTracksJson = ((List<Map<String, Object>>) response.getBody().get("items"));
+
+            List<Track> topTracks = topTracksJson.stream()
+                .map(trackJson -> {
+                    Track track = new Track();
+                    track.setName((String) trackJson.get("name"));
+                    
+                    // Extract artist information
+                    var artistsJson = (List<Map<String, Object>>) trackJson.get("artists");
+                    var artists = artistsJson.stream().map(artistJson -> {
+                        var artist = new Artist();
+                        artist.setName((String) artistJson.get("name"));
+                        return artist;
+                    }).toList();
+                    track.setArtists(artists);
+
+                    // Extract album information
+                    var album = (Map<String, Object>) trackJson.get("album");
+                    var albumCoverArtUrl = ((List<Map<String, Object>>) album.get("images")).get(0).get("url");
+                    var albumName = (String) album.get("name");
+                    track.setAlbumCoverUrl((String) albumCoverArtUrl);
+                    track.setAlbumName(albumName);
+
+                    // Extract Spotify URL
+                    var externalUrls = (Map<String, Object>) trackJson.get("external_urls");
+                    track.setSpotifyUrl((String) externalUrls.get("spotify"));
+
+                    return track;
+                })
+                .toList();
+        return topTracks;
+        } catch (HttpClientErrorException | IndexOutOfBoundsException e) {
+            throw new Exception("Failed to get top tracks", e);
+        }
+    }
 }
