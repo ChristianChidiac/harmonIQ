@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Album</title>
+    <link rel="stylesheet" th:href="@{/css/song-recognition-quiz.css}">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class = "logo">
+                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/quiz.html">Quiz</a></li>
+                </ul>
+            </nav>
+        </header>
+        <form th:action="@{/quizzes/recognitionQuiz/submit}" method="post" class="form-container">
+            <input type="hidden" name="questionId" th:value="${questionId}" />
+            
+
+        <audio id="audioPlayer">       
+        </audio>
+        
+        <button type="button" id="play-button" class="audio-controls">Play</button>
+        <button type="button" id="pause-button" class="audio-controls">Pause</button>
+
+        <div>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7"/>
+    </div>
+    
+            <div th:each="option : ${options}">
+                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
+                <label th:for="${option}" th:text="${option}"></label>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <footer>
+        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
+    </footer>
+</body>
+<script th:inline="javascript">
+
+    var previewUrl = /*[[${preview}]]*/ '';
+    var audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.src = previewUrl;
+
+    var playButton = document.getElementById('play-button');
+    playButton.addEventListener('click', () => {
+        playButton.innerHTML = "Playing";
+        audioPlayer.play();
+    });
+    
+    let timeoutCounter;
+    let timeLeft = 5000;
+    
+    //Pauses and resets audio file to 0 seconds after 5 seconds of play
+    audioPlayer.addEventListener('play', () => {
+        timeoutCounter = setTimeout(() => {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                playButton.innerHTML = "Play";
+                timeLeft = 5000;
+            }, timeLeft);
+        });
+
+    //Pauses the audio file, clears the timeoutCounter, and records the time left in the audio file
+    var pauseButton = document.getElementById('pause-button');
+    pauseButton.addEventListener('click', () => {
+        audioPlayer.pause();
+        clearTimeout(timeoutCounter);
+        timeLeft = 5000 - ((audioPlayer.currentTime) * 1000);
+        playButton.innerHTML = "Play";
+    });
+
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    //Initializes volume to starting value
+    audioPlayer.volume = volumeSlider.value;
+
+    //Changes volume to newly inputed volume
+    volumeSlider.addEventListener('input', function() {
+        audioPlayer.volume = volumeSlider.value;
+    });
+
+    var logoutButton = document.getElementById("logoutButton");
+    logoutButton.addEventListener('click', userLogout);
+    
+    function userLogout(evt) {
+        const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
+        setTimeout(() => logoutPopup.close(), 500);
+
+        evt.preventDefault();
+        setTimeout(() => location.reload(), 500);
+    }
+</script>
+</html>
