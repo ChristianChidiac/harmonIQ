@@ -1,15 +1,24 @@
 package com.group6.harmoniq.controllers;
 
-import java.security.SecureRandom;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,14 +29,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.group6.harmoniq.models.Artist;
 import com.group6.harmoniq.models.Track;
 import com.group6.harmoniq.models.User;
+import com.group6.harmoniq.models.UserRepository;
 
-import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class SpotifyController {
@@ -87,10 +94,12 @@ public class SpotifyController {
         return "redirect:" + authUrl;
     }
 
+    @Autowired
+    private UserRepository userRepository;
     // Checks application state
     // Requests an access token using user client_id and client_secret
     @GetMapping("/callback")
-    public String callback(@RequestParam("code") String code, @RequestParam("state") String state, @CookieValue(stateKey) String storedState, HttpServletResponse response, Model model) {
+    public String callback(@RequestParam("code") String code, @RequestParam("state") String state, @CookieValue(stateKey) String storedState, HttpServletResponse response, HttpSession session, Model model) {
      
         if (state == null || !state.equals(storedState)) {
             return "redirect:/index.html";
@@ -129,6 +138,10 @@ public class SpotifyController {
                     user.setTopArtist(getTopArtist(accessToken));
                     user.setTopTrack(getTopTrack(accessToken));
 
+                    saveUserToDatabase(user);
+                    session.setAttribute("currentUser", user);
+
+
                     model.addAttribute("user", user);
     
                 } catch (Exception e) {
@@ -139,6 +152,22 @@ public class SpotifyController {
             } else {
                 return "redirect:/index.html";
             }
+        }
+    }
+
+    private void saveUserToDatabase(User user) {
+        User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
+        if (existingUser == null) {
+            userRepository.save(user);
+        } else {
+            // Update user details if necessary
+            existingUser.setDisplayName(user.getDisplayName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setFollowers(user.getFollowers());
+            existingUser.setImageUrl(user.getImageUrl());
+            existingUser.setTopArtist(user.getTopArtist());
+            existingUser.setTopTrack(user.getTopTrack());
+            userRepository.save(existingUser);
         }
     }
 
@@ -182,6 +211,8 @@ public class SpotifyController {
 
             User user = new User();
             user.setDisplayName((String) response.getBody().get("display_name"));
+            user.setSpotifyId((String) response.getBody().get("id"));
+            user.setEmail((String) response.getBody().get("email"));
 
             var images = ((List<Map<String, Object>>) response.getBody().get("images"));
             if (images.size() > 0) {
@@ -196,6 +227,7 @@ public class SpotifyController {
             throw new Exception("Failed to get user profile", e);
         }
     }
+
 
     private Artist getTopArtist(String accessToken) throws Exception {
 
