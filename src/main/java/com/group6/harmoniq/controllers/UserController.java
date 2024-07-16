@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.group6.harmoniq.models.User;
-import com.group6.harmoniq.models.UserRepository;
+import com.group6.harmoniq.repositories.UserRepository;
 import com.group6.harmoniq.services.SpotifyService;
 
 import jakarta.servlet.http.HttpServletRequest;

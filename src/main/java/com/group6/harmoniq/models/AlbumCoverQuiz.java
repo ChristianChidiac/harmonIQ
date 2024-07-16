@@ -68,5 +68,9 @@ public class AlbumCoverQuiz {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }    
+    }
+    
+    public List<AlbumCoverQuizQuestion> getQuestions() {
+        return questions;
+    }
 }

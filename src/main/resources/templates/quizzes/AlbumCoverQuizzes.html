@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Album</title>
-    <link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
+    <title>Album Cover Quizzes</title>
 </head>
 <body>
     <div class="wrapper">
@@ -20,7 +18,15 @@
             </nav>
         </header>
     </div>
-    
+    <div class="quiz-container">
+        <a th:each="quiz : ${albumCoverQuizzes}" 
+           th:href="@{/album-cover-quiz/quiz/{id}(id=${quiz.id})}"  
+           class="quiz-button">
+            <img th:src="${quiz.questions[0].albumCoverUrl}" 
+                 alt="Album Cover" 
+                 class="quiz-image" />
+        </a>
+    </div>
     <footer>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>

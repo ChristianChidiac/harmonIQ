@@ -114,3 +114,12 @@ footer {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.quiz-button {
+    width: 200px; /* Adjust size as needed */
+    height: 200px; 
+    background-size: cover;
+    border: none;
+    cursor: pointer; /* Indicate it's clickable */
+    margin: 10px; /* Spacing between buttons */
+}

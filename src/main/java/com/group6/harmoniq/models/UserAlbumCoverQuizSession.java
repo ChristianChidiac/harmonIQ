@@ -26,7 +26,7 @@ public class UserAlbumCoverQuizSession {
     @Column(name = "completed_at")
     private LocalDateTime finished_at;
 
-    @OneToMany(mappedBy = "userQuizSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user_quiz_session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAlbumCoverQuizAnswers> answers = new ArrayList<>();
 
     public UserAlbumCoverQuizSession(AlbumCoverQuiz quiz, User user) {

@@ -24,6 +24,8 @@ public class AlbumCoverQuizQuestion {
     @Column(nullable = false)
     private String option3;
 
+    public AlbumCoverQuizQuestion() {
+    }
 
     public AlbumCoverQuizQuestion(String albumCoverUrl, String answer, String option1, String option2, String option3) {
         this.albumCoverUrl = albumCoverUrl;
