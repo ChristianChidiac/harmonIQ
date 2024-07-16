@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Album</title>
-    <link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
+    <title>Pick your Quiz</title>
+    <link rel="stylesheet" th:href="@{css/quiz-menu.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="wrapper">
         <header>
-            <div class = "logo">
-                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+            <div class="logo">
+                <a href="/"><img "@{/images/harmoniqlogo.png}" alt="Logo"></a>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/quiz.html">Quiz</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="quiz.html">Quiz</a></li>
                 </ul>
             </nav>
         </header>
+        <main>
+            <section class="quiz-section">
+                <h1>PICK YOUR QUIZ</h1>
+                <div class="quiz-cards">
+                    <div class="quiz-card">
+                        <a href="/quizzes/AlbumCoverQuiz">
+                            <div class="quiz-card-title">Album Cover</div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
-    
     <footer>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
