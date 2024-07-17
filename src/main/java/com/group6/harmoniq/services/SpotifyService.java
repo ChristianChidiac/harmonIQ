@@ -3,6 +3,7 @@ package com.group6.harmoniq.services;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.group6.harmoniq.models.Artist;
@@ -10,7 +11,31 @@ import com.group6.harmoniq.models.Track;
 
 @Service
 public class SpotifyService {
-    public SpotifyService() {
+
+    private String clientId;
+    private String clientSecret;
+    private String redirectUri;
+
+    public SpotifyService(
+        @Value("${spotify.client.id}") String clientId, 
+        @Value("${spotify.client.secret}") String clientSecret,
+        @Value("${spotify.redirect.uri}") String redirectUri
+    ) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.redirectUri = redirectUri;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
     public Artist getTopArtist() {
