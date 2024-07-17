@@ -1,0 +1,147 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #DDFFDB;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.wrapper {
+    flex: 1;
+    padding: 1rem; /* Added padding to the wrapper */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+header .logo img {
+    height: 64px;
+    border-radius: 50%;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 1rem;
+    font-family: "Azeret Mono", monospace;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+}
+
+
+main {
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+}
+
+.header-row h1 {
+    font-family: "Azeret Mono", monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    margin: 0; /* Removed default margin */
+}
+
+.search-container {
+    max-width: 300px;
+    width: 100%;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+table th, table td {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+table th {
+    background-color: #f2f2f2;
+}
+
+form button {
+    font-family: "Azeret Mono", monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #9AEC98;
+    color: black;
+    padding: 0.5rem 1rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+form button .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+form button .revoke-icon {
+    background-image: url('/path/to/revoke-icon.png'); /* Add path to your revoke icon */
+    background-size: cover;
+}
+
+form button .make-icon {
+    background-image: url('/path/to/make-icon.png'); /* Add path to your make icon */
+    background-size: cover;
+}
+
+form button:hover {
+    background-color: #7ED57C;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.logout-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
