@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>User List</title>
+    <link rel="stylesheet" href="../static/css/admin.css">
 </head>
 <body>
-    <h1>All Users</h1>
+    <div class="wrapper">
+    <header>
+        <div class="logo">
+            <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="header-row">
+        <h1>All Users</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search users..." onkeyup="searchUsers()">
+        </div>
+    </div>
     <table>
         <thead>
             <tr>
@@ -34,5 +52,9 @@
             </tr>
         </tbody>
     </table>
+    <footer>
+        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
+    </footer>
+    </div>
 </body>
 </html>
