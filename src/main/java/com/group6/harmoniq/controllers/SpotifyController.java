@@ -30,6 +30,7 @@ import com.group6.harmoniq.models.Artist;
 import com.group6.harmoniq.models.Track;
 import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
+import com.group6.harmoniq.services.SpotifyService;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.Cookie;
@@ -47,19 +48,14 @@ public class SpotifyController {
     final String stateKey = "spotify_auth_state";
 
     private String accessToken;
+    private final SpotifyService spotifyService;
 
-    public SpotifyController() {
-        if ("development".equals(System.getenv("ENVIRONMENT"))) {
-            client_id = System.getenv("SPOTIFY_CLIENT_ID");
-            client_secret = System.getenv("SPOTIFY_CLIENT_SECRET");
-            redirect_uri = System.getenv("REDIRECT_URI");
-        } else {
-            Dotenv dotenv = Dotenv.configure().load();
+    public SpotifyController(SpotifyService spotifyService) {
+        this.spotifyService = spotifyService;
 
-            client_id = dotenv.get("SPOTIFY_CLIENT_ID");
-            client_secret = dotenv.get("SPOTIFY_CLIENT_SECRET");
-            redirect_uri = dotenv.get("REDIRECT_URI");
-        }
+        this.client_id = this.spotifyService.getClientId();
+        this.client_secret = this.spotifyService.getClientSecret();
+        this.redirect_uri = this.spotifyService.getRedirectUri();
     }
 
     public String getAccessToken() {
