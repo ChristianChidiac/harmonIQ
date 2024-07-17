@@ -26,7 +26,7 @@ The target audience for our web app is anyone passionate about music. harmonIQ i
 
 ## User Requirements:
 
-- User must have a Spotify account that is whitelisted on the harmonIQ developer dashboard. This limitation holds until harmonIQ gets approved by Spotify to have unlimited user access. Spotify Login Credentials found under [Links and Credentials](https://github.com/ChristianChidiac/harmonIQ/tree/user-table-iteration-2#links-and-credentials) can be used as a temporary workaround to this issue.
+- User must have a Spotify account that is whitelisted on the harmonIQ developer dashboard. This limitation holds until harmonIQ gets approved by Spotify to have unlimited user access. Spotify Login Credentials found under [Links and Credentials](https://github.com/ChristianChidiac/harmonIQ/tree/main#links-and-credentials) can be used as a temporary workaround to this issue.
 - User must be on a desktop browser, and have internet access.
 
 ## Functionality Progress:
