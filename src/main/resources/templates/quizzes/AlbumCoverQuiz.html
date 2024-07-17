@@ -23,9 +23,6 @@
             <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
                 <input type="hidden" name="questionId" th:value="${questionId}" />
                 <div class="quiz-content">
-                    <div class="question-number">
-                        <span th:text="${quiz.questionNumber}"></span>
-                    </div>
                     <div class="quiz-image">
                         <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image">
                     </div>
