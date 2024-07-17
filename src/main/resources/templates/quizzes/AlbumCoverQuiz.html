@@ -19,15 +19,26 @@
                 </ul>
             </nav>
         </header>
-        <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
-            <input type="hidden" name="questionId" th:value="${questionId}" />
-            <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image" th:width="150px" th:height="150px">
-            <div th:each="option : ${options}">
-                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
-                <label th:for="${option}" th:text="${option}"></label>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        <main>
+            <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
+                <input type="hidden" name="questionId" th:value="${questionId}" />
+                <div class="quiz-content">
+                    <div class="question-number">
+                        <span th:text="${quiz.questionNumber}"></span>
+                    </div>
+                    <div class="quiz-image">
+                        <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image">
+                    </div>
+                    <div class="options" th:each="option : ${options}">
+                        <div>
+                            <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
+                            <label th:for="${option}" th:text="${option}"></label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="submit-button">Submit</button>
+            </form>
+        </main>
     </div>
     <footer>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
