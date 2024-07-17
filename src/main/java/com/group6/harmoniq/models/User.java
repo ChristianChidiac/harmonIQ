@@ -69,6 +69,11 @@ public class User {
     public long getUId() {
         return uid;
     }
+    
+    //For testing purposes
+    public void setUId(Long uid) {
+        this.uid = uid;
+    }
 
     public String getSpotifyId() {
         return spotifyId;

@@ -26,6 +26,10 @@ public class Quiz {
     public Long getId() {
         return id;
     }
+     //For testing purposes
+     public void setId(Long id) {
+        this.id = id;
+    }
     public String getQuestionPath() {
         return question_path;
     }

@@ -27,6 +27,10 @@ public class RecognitionQuiz {
     public Long getId() {
         return id;
     }
+    //For testing purposes
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String getPreviewUrl() {
         return preview_url;
     }
