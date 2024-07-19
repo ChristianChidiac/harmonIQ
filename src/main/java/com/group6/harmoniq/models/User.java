@@ -16,6 +16,7 @@ import jakarta.persistence.Transient;
 @Table(name = "users")
 public class User {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long uid;
@@ -40,6 +41,8 @@ public class User {
     @Transient
     private Track topTrack;
 
+    private int quizCount = 0;
+
     // Default is regular user
     private Boolean isAdmin = false;
     
@@ -63,6 +66,7 @@ public class User {
         this.externalSpotifyUrl = externalSpotifyUrl;
         this.topArtist = topArtist;
         this.topTrack = topTrack;
+        this.quizCount = 0;
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
@@ -142,6 +146,14 @@ public class User {
         this.topTrack = topTrack;
     }
 
+    public int getQuizCount() {
+        return quizCount;
+    }
+
+    public void incrementQuizCount() {
+        this.quizCount++;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
@@ -155,6 +167,5 @@ public class User {
     }
 
 
-    
     
 }
