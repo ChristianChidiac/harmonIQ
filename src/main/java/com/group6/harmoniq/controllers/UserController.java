@@ -50,7 +50,7 @@ public class UserController {
             model.addAttribute("users", users);
             return "userList";
         } else {
-            return "redirect:/access-denied"; 
+            return "redirect:/accessDenied"; 
         }
     }
 
@@ -63,9 +63,17 @@ public class UserController {
                 user.setIsAdmin(isAdmin);
                 userRepository.save(user);
             }
-            return "redirect:/admin/users";
+            return "redirect:/userList";
         } else {
-            return "redirect:/access-denied"; // Redirect to an access-denied page
+            return "redirect:/accessDenied"; // Redirect to an access-denied page
+        }
+    }
+
+    public void incrementUserQuizCount(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser != null) {
+            currentUser.incrementQuizCount();
+            userRepository.save(currentUser);
         }
     }
     
