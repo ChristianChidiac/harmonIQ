@@ -1,28 +1,23 @@
 package com.group6.harmoniq.controllers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.group6.harmoniq.models.Quiz;
 import com.group6.harmoniq.models.QuizRepository;
-
 import com.group6.harmoniq.models.RecognitionQuiz;
 import com.group6.harmoniq.models.RecognitionQuizRepository;
 
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
@@ -33,6 +28,9 @@ public class QuizController {
     @Autowired
     private RecognitionQuizRepository recognitionQuizRepository;
 
+    @Autowired
+    private UserController userController;
+
     private List<Quiz> allQuizzes;
     private List<RecognitionQuiz> allRecognitionQuestions;
     private int currentQuestionIndex = 0;
@@ -41,7 +39,8 @@ public class QuizController {
     private int recognitionScore = 0;
 
     @GetMapping("/quizzes/AlbumCoverQuiz")
-    public String startQuiz(Model model) {
+    public String startQuiz(HttpSession session, Model model) {
+        userController.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
         currentQuestionIndex = 0;
         score = 0; // Reset score when starting a new quiz
         allQuizzes = quizRepository.findAll();
@@ -97,8 +96,8 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes/recognitionQuiz")
-    public String startRecognitionQuiz(Model model) {
-           
+    public String startRecognitionQuiz(HttpSession session, Model model) {
+        userController.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
         currentRecognitionQuestionIndex = 0;
         recognitionScore = 0; // Reset score when starting a new quiz
         allRecognitionQuestions = recognitionQuizRepository.findAll();
