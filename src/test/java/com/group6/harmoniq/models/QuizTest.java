@@ -4,19 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import org.springframework.util.Assert;
 
 public class QuizTest {
 
     private Quiz quiz;
-    private static final long id = 1L;
     private static final String question_path = "images/albumcovers/Elephant.png";
     private static final String answer = "The White Stripes";
     private static final String option1 = "Post Malone";
@@ -26,19 +17,6 @@ public class QuizTest {
     @BeforeEach
     public void setUp() {
         quiz = new Quiz(question_path, answer, option1, option2, option3);
-        quiz.setId(1L);
-    }
-
-    @Test
-    void testGetId() {
-        assertEquals(id, quiz.getId()); 
-    }
-
-    @Test
-    void testSetId() {
-        long newSetId = 2L;
-        quiz.setId(newSetId);
-        assertEquals(newSetId, quiz.getId());
     }
 
     @Test

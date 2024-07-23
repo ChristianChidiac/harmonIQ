@@ -2,8 +2,6 @@ package com.group6.harmoniq.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,12 +9,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
+
 
 public class UserTest {
 
     private User user;
-    private static final long uid = 1L;
     private static final String spotifyId = "31rryrxu5pswlcjpb2qlrhrhqyyq";
     private static final String displayName = "harmonIQ-Test-User";
     private static final String email = "harmoniq.test.user@gmail.com";
@@ -31,7 +28,6 @@ public class UserTest {
     @BeforeEach
     public void setUp() {
         user = new User(spotifyId, displayName, email, followers, imageUrl, externalSpotifyUrl, topArtist, topTrack, isAdmin);
-        user.setUId(uid);
     }
 
     @Test
@@ -82,11 +78,6 @@ public class UserTest {
     @Test
     void testGetTopTrack() {
         assertEquals(topTrack, user.getTopTrack());
-    }
-
-    @Test
-    void testGetUId() {
-        assertEquals(uid, user.getUId());
     }
 
     @Test

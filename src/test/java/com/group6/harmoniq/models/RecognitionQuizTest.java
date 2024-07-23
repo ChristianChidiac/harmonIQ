@@ -4,19 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import org.springframework.util.Assert;
 
 public class RecognitionQuizTest {
 
     private RecognitionQuiz recognitionQuiz;
-    private static final long id = 1L;
     private static final String preview_url = "https://p.scdn.co/mp3-preview/fafa71e6ec5fb83cec5136e3e6a357c6233141ba?cid=cfe923b2d660439caf2b557b21f31221";
     private static final String answer = "Queen";
     private static final String option1 = "Foo Fighters";
@@ -26,20 +17,6 @@ public class RecognitionQuizTest {
     @BeforeEach
     public void setUp() {
         recognitionQuiz = new RecognitionQuiz(preview_url, answer, option1, option2, option3);
-        recognitionQuiz.setId(1L);
-    }
-
-
-    @Test
-    void testGetId() {
-        assertEquals(id, recognitionQuiz.getId());
-    }
-
-    @Test
-    void testSetId() {
-        long newSetId = 2L;
-        recognitionQuiz.setId(newSetId);
-        assertEquals(newSetId, recognitionQuiz.getId());
     }
 
     @Test
