@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.group6.harmoniq.models.Artist;
@@ -48,6 +51,7 @@ public class SpotifyController {
     final String stateKey = "spotify_auth_state";
 
     private String accessToken;
+    private String refreshToken;
     private final SpotifyService spotifyService;
 
     public SpotifyController(SpotifyService spotifyService) {
@@ -129,10 +133,17 @@ public class SpotifyController {
                 try {
                     Map<String, Object> body = responseEntity.getBody();
                     accessToken = (String) body.get("access_token");
+                    refreshToken = (String) body.get("refresh_token");
     
                     User user = getUserProfile(accessToken);
                     user.setTopArtist(getTopArtist(accessToken));
                     user.setTopTrack(getTopTrack(accessToken));
+
+                    List<Track> topTracks = getTopTracks(accessToken);
+                    List<Artist> topArtists = getTopArtists(accessToken);
+
+                    session.setAttribute("access_token", accessToken);
+                    session.setAttribute("refresh_token", refreshToken);
 
                     saveUserToDatabase(user);
                     session.setAttribute("currentUser", user);
@@ -293,6 +304,190 @@ public class SpotifyController {
             return topTrack;
         } catch (HttpClientErrorException e) {
             throw new Exception("Failed to get top tracks", e);
+        }
+    }
+
+    private List<Artist> getTopArtists(String accessToken) throws Exception {
+
+        // Modify the URL to request top artists (you can adjust the 'limit' parameter)
+        String url = "https://api.spotify.com/v1/me/top/artists?limit=10"; 
+    
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+    
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+    
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+    
+            // Extract artist data directly from the response
+            List<Map<String, Object>> topArtistsJson = (List<Map<String, Object>>) response.getBody().get("items");
+            if (topArtistsJson == null) {
+                System.err.println("Error: No 'items' found in Spotify response for top artists.");
+                return Collections.emptyList(); 
+            }
+            
+            // Map the JSON data to Artist objects
+            List<Artist> topArtists = topArtistsJson.stream()
+                .map(artistJson -> {
+                    Artist artist = new Artist();
+                    artist.setName((String) artistJson.get("name"));
+                    
+                    // Extract external URLs
+                    var externalUrls = (Map<String, Object>) artistJson.get("external_urls");
+                    artist.setSpotifyUrl((String) externalUrls.get("spotify"));
+    
+                    // Extract image URL (if available)
+                    var images = (List<Map<String, Object>>) artistJson.get("images");
+                    if (images != null && images.size() > 0) {
+                        artist.setImageUrl((String) images.get(0).get("url"));
+                    }
+    
+                    return artist;
+                })
+                .toList(); 
+    
+            return topArtists;
+        } catch (HttpClientErrorException e) {
+            throw new Exception("Failed to get top artists", e);
+        }
+    }
+
+    private List<Track> getTopTracks(String accessToken) throws Exception {
+
+        String url = "https://api.spotify.com/v1/me/top/tracks?limit=10";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        System.out.println("Started to get top 10 artists");
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
+            
+            List<Map<String, Object>> topTracksJson = (List<Map<String, Object>>) response.getBody().get("items");
+            if (topTracksJson == null) {
+                System.err.println("Error: No 'items' found in Spotify response.");
+                // Handle the error (e.g., return an empty list, throw an exception, etc.)
+                return Collections.emptyList(); 
+            }
+            List<Track> topTracks = topTracksJson.stream()
+                .map(trackJson -> {
+                    Track track = new Track();
+                    track.setName((String) trackJson.get("name"));
+                    
+                    // Extract artist information
+                    var artistsJson = (List<Map<String, Object>>) trackJson.get("artists");
+                    var artists = artistsJson.stream().map(artistJson -> {
+                        var artist = new Artist();
+                        artist.setName((String) artistJson.get("name"));
+                        return artist;
+                    }).toList();
+                    track.setArtists(artists);
+
+                    // Extract album information
+                    var album = (Map<String, Object>) trackJson.get("album");
+                    var albumCoverArtUrl = ((List<Map<String, Object>>) album.get("images")).get(0).get("url");
+                    var albumName = (String) album.get("name");
+                    track.setAlbumCoverUrl((String) albumCoverArtUrl);
+                    track.setAlbumName(albumName);
+
+                    // Extract Spotify URL
+                    var externalUrls = (Map<String, Object>) trackJson.get("external_urls");
+                    track.setSpotifyUrl((String) externalUrls.get("spotify"));
+
+                    return track;
+                })
+                .toList();
+        return topTracks;
+        } catch (HttpClientErrorException | IndexOutOfBoundsException e) {
+            throw new Exception("Failed to get top tracks", e);
+        }
+    }
+
+    @RequestMapping("/quiz")
+    public String quiz(HttpSession session, RedirectAttributes redirectAttributes) {
+        System.out.println("Entered quiz method");
+
+        String accessToken = (String) session.getAttribute("access_token");
+        String refreshToken = (String) session.getAttribute("refresh_token");
+
+        if (accessToken == null) {
+            // User hasn't authorized yet. Redirect to initiate the OAuth flow.
+            return "redirect:/login"; // Assuming '/authorize' starts the authorization flow
+        }
+
+        try {
+            List<Track> tracks = getTopTracks(accessToken); 
+            session.setAttribute("tracks", tracks);
+            System.out.println("Passed all tracks to session");
+        } catch (HttpClientErrorException.Unauthorized ex) { // Handle 401 Unauthorized error (token expired)
+            if (refreshToken != null) {
+                // Attempt to refresh the access token
+                accessToken = refreshAccessToken(refreshToken);
+
+                if (accessToken != null) {
+                    // Retry the API call with the new access token
+                    try {
+                        List<Track> tracks = getTopTracks(accessToken);
+                        session.setAttribute("tracks", tracks);
+                    } catch (Exception e) {
+                        // Handle other exceptions if the retry also fails
+                        e.printStackTrace();
+                    }
+                } else {
+                    // Token refresh failed, likely due to invalid refresh token or other issue
+                    System.out.println("Failed to refresh access token. Please reauthorize.");
+                    redirectAttributes.addFlashAttribute("error", "Failed to refresh access token. Please reauthorize.");
+                    return "redirect:/login"; // Redirect to re-authorize
+                }
+            } else {
+                // No refresh token available, redirect to authorize
+                System.out.println("Session expired. Please reauthorize.");
+                redirectAttributes.addFlashAttribute("error", "Session expired. Please reauthorize.");
+                return "redirect:/login"; // Redirect to re-authorize
+            }
+        } catch (Exception e) {
+            // Handle other exceptions
+            e.printStackTrace();
+            // Add an error message to the model or flash attributes
+            // (e.g., model.addAttribute("error", "An error occurred while fetching tracks."))
+        }
+
+        return "redirect:/quizzes/AlbumQuiz/getAll";
+    }
+
+    private String refreshAccessToken(String refreshToken) {
+        String tokenUrl = spotifyUrl + "/api/token"; // Same token URL as in your callback
+        String authHeader = "Basic " + Base64.getEncoder().encodeToString((client_id + ":" + client_secret).getBytes(StandardCharsets.UTF_8));
+    
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", authHeader);
+    
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("grant_type", "refresh_token");
+        requestBody.add("refresh_token", refreshToken);
+    
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
+    
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(tokenUrl, request, Map.class);
+    
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            Map<String, Object> body = responseEntity.getBody();
+            String newAccessToken = (String) body.get("access_token");
+            // Optionally, update the refresh token if a new one is provided in the response
+            if (body.containsKey("refresh_token")) {
+                refreshToken = (String) body.get("refresh_token");
+            }
+            return newAccessToken;
+        } else {
+            // Handle the error case where token refresh fails
+            // (e.g., log an error, return null, throw an exception)
+            return null;
         }
     }
 }
