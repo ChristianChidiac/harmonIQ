@@ -28,7 +28,7 @@
 </head>
 <body>
     <a href="joinPlaylist" id = "joinButton">
-        <button>
+        <button th:if="${isCollaborator == false}">
             <span>Join Playlist</span>
         </button>
     </a>
@@ -49,13 +49,16 @@
     <p th:text="${playlistUrl}">Playlist URL</p>
 
     <h2>Tracks:</h2>
-    <ul>
+    
         <li th:each="item : ${tracks}">
-            <img th:src="${item.track.album.images[0].url}" alt="Album Cover" style="width: 200px; height: 200px;"/>
+            <img th:src="${item.track.album.images[0].url}" th:attr="previewUrl=${item.track.preview_url}" alt="Album Cover" style="width: 200px; height: 200px;" />
             <span th:text="${item.track.name}">Track Name</span> By
             <span th:text="${item.track.artists[0].name}">Artist</span>
         </li>
     </ul>
+
+    <audio id="audioPlayer">       
+    </audio>
 
     <script>
         var joinButton = document.getElementById("joinButton");
@@ -70,7 +73,7 @@
             setTimeout(() => location.reload(), 3000);
 
             fetch('/joinPlaylist', {
-        method: 'GET', // Use the appropriate HTTP method
+        method: 'GET', 
         headers: {
             'Content-Type': 'application/json'
         }})
@@ -90,10 +93,27 @@
         }
     });
         window.addEventListener('message', function(evt) {
-        if (evt.data === 'closeSongLimitPopup') {
+        if (evt.data === 'closePopup') {
             addSongsPage.style.display = "none";
         }
     });
+
+    document.querySelectorAll('img[previewUrl]').forEach(function(evt) {
+            evt.addEventListener('click', function() {
+                var previewUrl = this.getAttribute('previewUrl');
+                if (previewUrl) {
+                    var audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = previewUrl;
+                    console.log(previewUrl);
+                    audioPlayer.play();
+
+                    setTimeout(function() {
+                        audioPlayer.pause();
+                        audioPlayer.currentTime = 0; 
+                    }, 5000);
+                }
+            });
+        })
     
     </script>
 </body>

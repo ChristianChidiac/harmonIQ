@@ -69,7 +69,8 @@ public String showCollaborativePlaylist(HttpSession session, Model model)
         model.addAttribute("playlistDescription", playlistDescription);
         model.addAttribute("playlistUrl", playlistUrl);
         model.addAttribute("tracks", tracks);
-
+        User existingUser =  getExistingUser(session);
+        model.addAttribute("isCollaborator", existingUser.getIsCollaborator());
     }
 
     return "collaborativePlaylist";
@@ -79,26 +80,9 @@ public String showCollaborativePlaylist(HttpSession session, Model model)
 @GetMapping("/joinPlaylist")
 public String joinPlaylist(HttpSession session, Model model)
 {
-    System.out.println("YOOOOOOOOOOOOOOOOOOO");
-    User currentUser = (User) session.getAttribute("currentUser");
-    if(currentUser != null)
-    {
-        User existingUser = userRepository.findBySpotifyId(currentUser.getSpotifyId());
-        if(existingUser != null)
-        {
-            existingUser.setIsCollaborator(true);
-            userRepository.save(existingUser);
-            System.out.println("YOOOOOOOOOOOOOOOOOOO");
-        }
-        else
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not in database.");
-        }
-    }
-    else
-    {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User session has expired.");
-    }
+    User existingUser =  getExistingUser(session);
+    existingUser.setIsCollaborator(true);
+    userRepository.save(existingUser);
   
     return "collaborativePlaylist";
     }
@@ -107,21 +91,33 @@ public String joinPlaylist(HttpSession session, Model model)
 @GetMapping("/addSongsPopup")
 public String showAddSongsPopup(HttpSession session, Model model)
 {
-    List<Map<String, Object>> top50Tracks = getTop50TracksShuffled(session);
+    User existingUser =  getExistingUser(session);
     
-    Map<String, Object> track = top50Tracks.get(0);
-
-    model.addAttribute("track", track);
-
-    User currentUser = (User) session.getAttribute("currentUser");
-    if(currentUser.getAddedSongs() >= currentUser.getAddedSongsLimit())
+    if(existingUser.getIsCollaborator())
     {
-        return "/addSongsLimitReached";
+        //if user is a collaborator, check if they've reached the limit of songs added
+        if(existingUser.getAddedSongs() >= existingUser.getAddedSongsLimit())
+        {
+            return "addSongsLimitReached";
+        }
+      
+        else
+        {
+            List<Map<String, Object>> top50Tracks = getTop50TracksShuffled(session);
+
+            Map<String, Object> track = top50Tracks.get(0);
+
+            model.addAttribute("track", track);
+
+            return "addSongs";
+        }
     }
+     //If user is not a collaborator, display the notCollaborator template in the popup
     else
     {
-    return "addSongs";
+        return "notCollaborator";
     }
+
 }
 
 
@@ -145,14 +141,14 @@ public String addSongAndNextSong(@RequestParam("trackUri") String trackUri, Http
 
     restTemplate.postForEntity(url, requestEntity, Map.class);
 
-    User currentUser = (User) session.getAttribute("currentUser");
+    User existingUser =  getExistingUser(session);
     
     //User with updated addedSongs attribute
-    User updatedUser = increaseAddedSongsAttribute(currentUser, session);
+    User updatedUser = increaseAddedSongsAttribute(existingUser, session);
 
     if(updatedUser.getAddedSongs() >= updatedUser.getAddedSongsLimit())
     {
-        return "/addSongsLimitReached";
+        return "addSongsLimitReached";
     }
 
     return addNextSongToModel(session,  model);
@@ -163,6 +159,7 @@ public String nextSong(HttpSession session, Model model)
 {
     return addNextSongToModel(session,  model);
 }
+
 
 
 public String addNextSongToModel(HttpSession session, Model model)
@@ -207,22 +204,35 @@ public  List<Map<String, Object>> getTop50TracksShuffled(HttpSession session)
       
 }
 
- private User increaseAddedSongsAttribute(User user, HttpSession session) {
-        User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
-        if (existingUser == null) {
-               user.setAddedSongs(1);
-            userRepository.save(user);
-            session.setAttribute("currentUser", user);
-            return user;
-        } else {
-            // Update user details if necessary
-            System.out.println(user.getAddedSongs());
-            existingUser.setAddedSongs(user.getAddedSongs() + 1);
+ private User increaseAddedSongsAttribute(User existingUser, HttpSession session) {
+       
+            existingUser.setAddedSongs(existingUser.getAddedSongs() + 1);
             userRepository.save(existingUser);
             session.setAttribute("currentUser", existingUser);
             return existingUser;
         }
   
+    
+
+    private User getExistingUser(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser != null)
+        {
+            User existingUser = userRepository.findBySpotifyId(currentUser.getSpotifyId());
+            if(existingUser != null)
+            {
+                session.setAttribute("currentUser", existingUser);
+                return existingUser;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not in database.");
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User session has expired.");
+        }
     }
 
 }
