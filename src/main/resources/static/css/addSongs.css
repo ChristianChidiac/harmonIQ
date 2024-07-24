@@ -1,0 +1,21 @@
+
+#albumCoverArt {
+    float: left;
+    border: solid;
+    border-width: 1px;
+    margin-right: 15px;
+}
+
+#songName {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#addSongQuestion {
+    margin-top: 20px;
+}
+
+button {
+    margin-top: 10px;
+}
+

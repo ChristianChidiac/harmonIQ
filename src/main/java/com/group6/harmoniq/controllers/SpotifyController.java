@@ -76,7 +76,7 @@ public class SpotifyController {
         String state = generateRandomString(secureRandom, 16);
         Cookie stateCookie = new Cookie(stateKey, state);
         response.addCookie(stateCookie);
-        String scope = "user-read-private user-read-email user-follow-read user-top-read";
+        String scope = "user-read-private user-read-email user-follow-read user-top-read playlist-modify-public playlist-modify-private";
 
         // Requesting Authorization
         String authUrl = UriComponentsBuilder.fromHttpUrl(spotifyUrl + "/authorize")
@@ -133,10 +133,17 @@ public class SpotifyController {
                     User user = getUserProfile(accessToken);
                     user.setTopArtist(getTopArtist(accessToken));
                     user.setTopTrack(getTopTrack(accessToken));
+               
+                   User existingUser = saveUserToDatabase(user);
 
-                    saveUserToDatabase(user);
+                    //update the addedSongs and addedSongsLimit attributes to the existingUser's values if necessary, so that
+                    //they are accessible in the "currentUser" session
+                    user.setAddedSongs(existingUser.getAddedSongs());
+                    user.setAddedSongsLimit(existingUser.getAddedSongsLimit());
+
                     session.setAttribute("currentUser", user);
-
+         
+                    session.setAttribute("accessToken", accessToken);
 
                     model.addAttribute("user", user);
     
@@ -151,10 +158,11 @@ public class SpotifyController {
         }
     }
 
-    private void saveUserToDatabase(User user) {
+    private User saveUserToDatabase(User user) {
         User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
         if (existingUser == null) {
             userRepository.save(user);
+            return user;
         } else {
             // Update user details if necessary
             existingUser.setDisplayName(user.getDisplayName());
@@ -164,6 +172,7 @@ public class SpotifyController {
             existingUser.setTopArtist(user.getTopArtist());
             existingUser.setTopTrack(user.getTopTrack());
             userRepository.save(existingUser);
+            return existingUser;
         }
     }
 

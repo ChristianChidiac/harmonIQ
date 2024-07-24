@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +23,12 @@ import com.group6.harmoniq.models.RecognitionQuiz;
 import com.group6.harmoniq.models.RecognitionQuizRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 
 @Controller
@@ -34,11 +40,14 @@ public class QuizController {
     private RecognitionQuizRepository recognitionQuizRepository;
 
     private List<Quiz> allQuizzes;
-    private List<RecognitionQuiz> allRecognitionQuestions;
+    // private List<Map<String, Object>> allRecognitionQuestions;
+    List<Map<String, Object>> recognitionQuizAnswers = new ArrayList<>();
+    List<Map<String, Object>> recognitionQuizOptions = new ArrayList<>();
     private int currentQuestionIndex = 0;
     private int score = 0;  // Add score variable
     private int currentRecognitionQuestionIndex = 0;
     private int recognitionScore = 0;
+    
 
     @GetMapping("/quizzes/AlbumCoverQuiz")
     public String startQuiz(Model model) {
@@ -97,31 +106,29 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes/recognitionQuiz")
-    public String startRecognitionQuiz(Model model) {
-           
+    public String startRecognitionQuiz(Model model, HttpSession session) {
+
         currentRecognitionQuestionIndex = 0;
         recognitionScore = 0; // Reset score when starting a new quiz
-        allRecognitionQuestions = recognitionQuizRepository.findAll();
-        Collections.shuffle(allRecognitionQuestions);
-        return "redirect:/quizzes/recognitionQuiz/" + allRecognitionQuestions.get(currentRecognitionQuestionIndex).getId(); // Go to the first quiz question
+        addRecognitionQuizAnswersAndOptionsFromTop50Tracks(session);
+
+        return "redirect:/quizzes/recognitionQuiz/" + currentRecognitionQuestionIndex; // Go to the first quiz question
     }
 
     @GetMapping("/quizzes/recognitionQuiz/{questionId}")
-    public String getRecognitionQuizQuestion(@PathVariable Long questionId, Model model) {
-        if (currentRecognitionQuestionIndex < allRecognitionQuestions.size()) {
-            RecognitionQuiz recognitionQuestion = recognitionQuizRepository.findById(questionId).orElse(null); // Get the current quiz by Id
-
-            // directs to errorPage template if no question is found
-            if (recognitionQuestion == null) {
-                return "quizzes/errorPage"; 
-            }
-
-            List<String> options = Arrays.asList(recognitionQuestion.getAnswer(), recognitionQuestion.getOption1(), recognitionQuestion.getOption2(), recognitionQuestion.getOption3());
+    public String getRecognitionQuizQuestion(@PathVariable int questionId, Model model) {
+        if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
+         
+           
+            Map<String,Object> answer = recognitionQuizAnswers.get(questionId);
+             //When questionId = 0, we add the recognitionQuizOptions at indices 0,1, and 2 to the model.  When questionId = 1,
+             // we add the recognitionQuizOptions at indices 3,4, and 5 to the model, and so on
+            List<Map<String,Object>> options = Arrays.asList(answer, recognitionQuizOptions.get(questionId * 3),  recognitionQuizOptions.get((questionId * 3) + 1),  recognitionQuizOptions.get((questionId * 3) + 2));
             Collections.shuffle(options);
 
-            model.addAttribute("preview", recognitionQuestion.getPreviewUrl());
+            model.addAttribute("answer", answer);
             model.addAttribute("options", options);
-            model.addAttribute("questionId", recognitionQuestion.getId());
+            model.addAttribute("questionId", questionId);
             return "quizzes/recognitionQuiz"; // Redirect to the quiz page
         } else {
             model.addAttribute("score", recognitionScore); // Add score to the model for the result page
@@ -130,10 +137,9 @@ public class QuizController {
     }
     
     @PostMapping("/quizzes/recognitionQuiz/submit")
-    public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model) {
-        RecognitionQuiz recognitionQuestion = recognitionQuizRepository.findById(questionId).orElse(null);
-
-        if (recognitionQuestion != null && selectedOption.equals(recognitionQuestion.getAnswer())) {
+    public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") int questionId, Model model) {
+    System.out.println(recognitionQuizAnswers.size());
+        if (recognitionQuizAnswers != null && selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
             recognitionScore++; // Increment score for correct answer
             model.addAttribute("result", "Correct!");
         } else {
@@ -143,12 +149,50 @@ public class QuizController {
         currentRecognitionQuestionIndex++; // Move to the next question
 
         // Redirect to the next quiz question or result page
-        if (currentRecognitionQuestionIndex < allRecognitionQuestions.size()) {
-            return "redirect:/quizzes/recognitionQuiz/" + allRecognitionQuestions.get(currentRecognitionQuestionIndex).getId();
+        if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
+            return "redirect:/quizzes/recognitionQuiz/" + currentRecognitionQuestionIndex;
         } else {
             model.addAttribute("score", recognitionScore);
             return "quizzes/quizResult";
-        }
+        }  
+
     }
+
+
+    public void addRecognitionQuizAnswersAndOptionsFromTop50Tracks(HttpSession session)
+    {
+          String getTop50TracksUrl = "https://api.spotify.com/v1/me/top/tracks?limit=50";
+        
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + (String) session.getAttribute("accessToken"));
+    
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+    
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.exchange(getTop50TracksUrl, HttpMethod.GET, requestEntity, Map.class);
+                
+            List<Map<String, Object>> top50Tracks = ((List<Map<String, Object>>) response.getBody().get("items"));
+            Collections.shuffle(top50Tracks);
+    
+            //Make sure  recognitionQuizAnswers and recognitionQuizOptions are empty before adding answers and options to them
+            recognitionQuizAnswers.clear();
+            recognitionQuizOptions.clear();
+
+            for (int i = 0; i < 5; i++) {
+                Map<String, Object> track  = (((List<Map<String, Object>>) response.getBody().get("items"))).get(i);
+                recognitionQuizAnswers.add(track);
+              }
+
+              for (int i = 5; i < 20; i++) {
+                Map<String, Object> track  = (((List<Map<String, Object>>) response.getBody().get("items"))).get(i);
+                recognitionQuizOptions.add(track);
+              }
+
+            // session.setAttribute("top5Tracks", recognitionQuizAnswers);
+    
+            // return recognitionQuizAnswers;
+          
+    }
+
 
 }

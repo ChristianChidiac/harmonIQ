@@ -34,8 +34,8 @@
     </div>
     
             <div th:each="option : ${options}">
-                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
-                <label th:for="${option}" th:text="${option}"></label>
+                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option.name}" required />
+                <label th:for="${option}" th:text="${option.name}"></label>
             </div>
             <button type="submit">Submit</button>
         </form>
@@ -46,7 +46,7 @@
 </body>
 <script th:inline="javascript">
 
-    var previewUrl = /*[[${preview}]]*/ '';
+    var previewUrl = /*[[${answer.preview_url}]]*/ '';
     var audioPlayer = document.getElementById('audioPlayer');
     audioPlayer.src = previewUrl;
 
