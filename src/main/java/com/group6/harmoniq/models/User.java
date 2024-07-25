@@ -57,7 +57,7 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String spotifyId, String displayName, String email, int followers,  String imageUrl, String externalSpotifyUrl, Artist topArtist, Track topTrack, Boolean isAdmin) {
+    public User(String spotifyId, String displayName, String email, int followers,  String imageUrl, String externalSpotifyUrl, Artist topArtist, Track topTrack, int quizCount, Boolean isAdmin) {
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
@@ -66,7 +66,7 @@ public class User {
         this.externalSpotifyUrl = externalSpotifyUrl;
         this.topArtist = topArtist;
         this.topTrack = topTrack;
-        this.quizCount = 0;
+        this.quizCount = quizCount;
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
     }
 
