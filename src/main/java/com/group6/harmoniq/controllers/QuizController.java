@@ -16,6 +16,7 @@ import com.group6.harmoniq.models.Quiz;
 import com.group6.harmoniq.models.QuizRepository;
 import com.group6.harmoniq.models.RecognitionQuiz;
 import com.group6.harmoniq.models.RecognitionQuizRepository;
+import com.group6.harmoniq.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,7 +30,7 @@ public class QuizController {
     private RecognitionQuizRepository recognitionQuizRepository;
 
     @Autowired
-    private UserController userController;
+    private UserService userService;
 
     private List<Quiz> allQuizzes;
     private List<RecognitionQuiz> allRecognitionQuestions;
@@ -40,7 +41,7 @@ public class QuizController {
 
     @GetMapping("/quizzes/AlbumCoverQuiz")
     public String startQuiz(HttpSession session, Model model) {
-        userController.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
+        userService.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
         currentQuestionIndex = 0;
         score = 0; // Reset score when starting a new quiz
         allQuizzes = quizRepository.findAll();
@@ -97,7 +98,7 @@ public class QuizController {
 
     @GetMapping("/quizzes/recognitionQuiz")
     public String startRecognitionQuiz(HttpSession session, Model model) {
-        userController.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
+        userService.incrementUserQuizCount(session); // Call incrementUserQuizzesPlayed
         currentRecognitionQuestionIndex = 0;
         recognitionScore = 0; // Reset score when starting a new quiz
         allRecognitionQuestions = recognitionQuizRepository.findAll();
