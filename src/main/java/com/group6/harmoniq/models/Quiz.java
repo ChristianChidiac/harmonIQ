@@ -26,6 +26,7 @@ public class Quiz {
     public Long getId() {
         return id;
     }
+    
     public String getQuestionPath() {
         return question_path;
     }

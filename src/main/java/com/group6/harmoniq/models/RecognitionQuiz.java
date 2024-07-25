@@ -27,6 +27,7 @@ public class RecognitionQuiz {
     public Long getId() {
         return id;
     }
+    
     public String getPreviewUrl() {
         return preview_url;
     }
