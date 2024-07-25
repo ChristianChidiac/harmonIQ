@@ -68,13 +68,5 @@ public class UserController {
             return "redirect:/accessDenied"; // Redirect to an access-denied page
         }
     }
-
-    public void incrementUserQuizCount(HttpSession session) {
-        User currentUser = (User) session.getAttribute("currentUser");
-        if (currentUser != null) {
-            currentUser.incrementQuizCount();
-            userRepository.save(currentUser);
-        }
-    }
     
 }
