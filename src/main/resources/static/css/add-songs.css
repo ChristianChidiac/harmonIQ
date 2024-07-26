@@ -1,0 +1,84 @@
+body {
+    font-family: "Azeret Mono", monospace;
+    margin: 0;
+    padding: 0;
+    background-color: #DDFFDB;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.add-song-section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.add-song-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#albumCoverArt {
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+#songName {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+#artistName {
+    color: #888;
+}
+
+#addSongQuestion {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}
+
+#limitMessage {
+    font-size: 1.2rem;
+    margin: 2rem 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+#collaboratorMessage {
+    font-size: 1.2rem;
+    margin: 2rem 0;
+}
+
+.button-common {
+    font-family: "Azeret Mono", monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #9AEC98;
+    color: black;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: inline-block;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.button-common:hover {
+    background-color: #7fdd72;
+}
+
+#exitButton {
+    margin-top: 1rem;
+}

@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Songs Limit Reached</title>
+    <link rel="stylesheet" href="/css/add-songs.css">
 </head>
 <body>
-    <p>
-    You've reached the limit for adding songs to the playlist. Play More Quizzes to add more songs.
-    </p>
-    
+    <main class="add-song-section">
+        <div class="add-song-content">
+            <p id="limitMessage">
+                You've reached the limit for adding songs to the playlist. Play More Quizzes to add more songs.
+            </p>
 
-    <button id = "exitButton">Exit</button>
+            <button id="exitButton" class="button-common">Exit</button>
+        </div>
+    </main>
 
     <script>
       var exitButton = document.getElementById("exitButton");
