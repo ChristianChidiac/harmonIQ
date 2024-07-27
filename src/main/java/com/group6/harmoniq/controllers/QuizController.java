@@ -122,6 +122,8 @@ public class QuizController {
         if (quiz == null) {
             return "quizzes/errorPage";  // redirect to an error page 
         }
+        score = 0; // Reset score when starting a new quiz
+        currentQuestionIndex = 0; // Reset question index when starting a new quiz
         // Store quiz details in session for subsequent question displays
         session.setAttribute("quiz", quiz); 
         session.setAttribute("score", 0); 
