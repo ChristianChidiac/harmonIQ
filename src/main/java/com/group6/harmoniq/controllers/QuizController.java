@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,12 +17,10 @@ import com.group6.harmoniq.models.RecognitionQuizRepository;
 import com.group6.harmoniq.models.Track;
 import com.group6.harmoniq.models.QuizQuestion;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -36,15 +33,36 @@ public class QuizController {
     private RecognitionQuizRepository recognitionQuizRepository;
 
     // private List<Quiz> allQuizzes;
-    private List<AlbumQuiz> allAlbumQuizzes;
+    private List<AlbumQuiz> allAlbumQuizzes = new ArrayList<>();
     private List<RecognitionQuiz> allRecognitionQuestions;
     private int currentQuestionIndex = 0;
     private int score = 0;  // Add score variable
     private int currentRecognitionQuestionIndex = 0;
     private int recognitionScore = 0;
+    private List<Track> allTracks;
+    private Long quizId = (long) 0;
+    private Long questionId = (long) 0;
+
+    @SuppressWarnings("unchecked")
+    @GetMapping("/quizzes/getAll")
+    public String getMethodName(HttpSession session, Model model) {
+        allTracks = (List<Track>) session.getAttribute("topTracks");
+        return "quizzes/QuizTypesView";
+    }
+
+    @GetMapping("/quizzes/AlbumQuiz/generate")
+    public String generateQuestion(HttpSession session, Model model) {
+        if (allTracks == null) {
+            // Handle the case where there are no tracks in the session
+            return "quizzes/EmptyTracks"; // Or some other appropriate action
+        }
+        allAlbumQuizzes.add(createQuizFromTracks());
+        System.out.println("Quiz generated");
+        return "redirect:/quizzes/AlbumQuiz/getAll";
+    }
 
     @GetMapping("/quizzes/AlbumQuiz/getAll")
-    public String getMethodName(HttpSession session, Model model) {
+    public String getAllAlbumQuizzes(HttpSession session, Model model) {
         try{
             model.addAttribute("albumQuizzes", allAlbumQuizzes);
             System.out.println("Get All method called");
@@ -54,36 +72,33 @@ public class QuizController {
         return "quizzes/allAlbumQuizzes";
     }
 
-    @GetMapping("/quizzes/AlbumQuiz/generate")
-    public String generateQuestion(HttpSession session, Model model) {
-        List<Track> allTracks = (List<Track>) session.getAttribute("tracks");
-        if (allTracks == null) {
-            // Handle the case where there are no tracks in the session
-            return "quizzes/EmptyTracks"; // Or some other appropriate action
-        }
-        allAlbumQuizzes.add(createQuizFromTracks(allTracks));
-        return "redirect:/quizzes/AlbumQuiz/getAll";
-    }
-
     @GetMapping("/quizzes/AlbumQuiz/start")
     public String startAlbumQuiz(HttpSession session, Model model) {
         return new String();
     }
 
-    public AlbumQuiz createQuizFromTracks(List<Track> tracks) {
+    public AlbumQuiz createQuizFromTracks() {
+        List<Track> tracks = new ArrayList<>(allTracks);
+        System.out.println("Creating quiz from tracks");
         AlbumQuiz quiz = new AlbumQuiz();
+        System.out.println("Quiz ID: " + quizId);
+        quiz.setId(quizId++);
         Collections.shuffle(tracks); // Randomize track order
         int numQuestions = 5; // Max 5 questions
 
         for (int i = 0; i < numQuestions; i++) {
             Track answerTrack = tracks.get(i);
             QuizQuestion question = createQuestion(answerTrack, tracks);
+            System.out.println("Question created");
+            System.out.println("Question ID: " + questionId);
+            question.setId(questionId++);
             quiz.getQuestions().add(question); 
         }
         return quiz;
     }
 
     private QuizQuestion createQuestion(Track answerTrack, List<Track> allTracks) {
+        System.out.println("Creating question for track: " + answerTrack.getName());
         QuizQuestion question = new QuizQuestion();
         question.setQuestionUrl(answerTrack.getAlbumCoverUrl());
         question.setAnswer(answerTrack.getName());
@@ -99,6 +114,105 @@ public class QuizController {
         return question;
     }
 
+
+    @GetMapping("/AlbumQuiz/{quizId}")
+    public String startQuiz(@PathVariable Long quizId, HttpSession session, Model model) {
+            // Retrieve the quiz by quizId
+        AlbumQuiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            return "quizzes/errorPage";  // redirect to an error page 
+        }
+        // Store quiz details in session for subsequent question displays
+        session.setAttribute("quiz", quiz); 
+        session.setAttribute("score", 0); 
+        // Retrieve the first question after shuffling (if needed)
+        System.out.println("Quiz started");
+        System.out.println("Quiz ID: " + quiz.getId());
+        System.out.println("Quiz questions: " + quiz.getQuestions().get(0).getQuestionUrl());
+        List<QuizQuestion> allQuestions = quiz.getQuestions();
+        Long firstQuestionId = allQuestions.get(0).getId();
+        session.setAttribute("questionId", firstQuestionId);
+        session.setAttribute("questions", allQuestions);
+        System.out.println("First question ID: " + firstQuestionId);
+        System.out.println("First question URL: " + allQuestions.get(0).getQuestionUrl());
+        System.out.println("quiz is not null");
+
+        return "redirect:/AlbumQuiz/" + quizId + "/question/" + firstQuestionId;
+    }
+
+    public AlbumQuiz getQuizById(Long quizId) {
+        for (AlbumQuiz quiz : allAlbumQuizzes) {
+            if (quiz.getId().equals(quizId)) { return quiz; }
+        }
+        return null;
+    }
+
+    public QuizQuestion getQuestionById(Long questionId, AlbumQuiz quiz) {
+        for (QuizQuestion question : quiz.getQuestions()) {
+            if (question.getId().equals(questionId)) { return question; }
+        }
+        return null;
+    }
+
+
+    @GetMapping("/AlbumQuiz/{quizId}/question/{questionId}")
+    public String getQuiz(@PathVariable Long questionId, @PathVariable Long quizId, HttpSession session, Model model) {
+        System.out.println("Getting quiz");
+        System.out.println("Quiz ID: " + quizId);
+        System.out.println("Question ID: " + questionId);
+        Long currentQuestionId = questionId;
+        QuizQuestion question = getQuestionById(currentQuestionId, getQuizById(quizId));
+        if (currentQuestionId == null) {
+            return "quizzes/errorPage";  // redirect to an error page 
+        }
+        if (currentQuestionIndex >= 5) {
+            // Redirect to the result page
+            model.addAttribute("score", score);
+            return "quizzes/quizResult";
+        } else {
+            List<String> options = Arrays.asList(question.getAnswer(), question.getOption1(), question.getOption2(), question.getOption3());
+            Collections.shuffle(options);
+
+            model.addAttribute("question", question);
+            model.addAttribute("options", options);
+            model.addAttribute("questionId", question.getId());
+            model.addAttribute("quizId", quizId);
+        }
+            
+            return "quizzes/AlbumCoverQuiz"; // Redirect to the quiz page
+    }
+
+    @PostMapping("/AlbumQuiz/submit")
+    public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, @RequestParam("quizId") Long quizId, Model model, HttpSession session) {
+        
+        AlbumQuiz quiz = getQuizById(quizId);
+        List<QuizQuestion> allQuestion = quiz.getQuestions();
+    
+        // check the size of allQuestion here
+        if (allQuestion.size() < 5) {
+            // Handle the case where there are less than 5 questions. 
+            return "quizzes/errorPage"; 
+        }
+    
+        QuizQuestion question = allQuestion.get(currentQuestionIndex);
+        if (question != null && selectedOption.equals(question.getAnswer())) {
+            score++; // Increment score for correct answer
+            model.addAttribute("result", "Correct!"); //TODO: add score design and logic
+        } else {
+            model.addAttribute("result", "Incorrect.");
+        }
+        currentQuestionIndex++; // Move to the next question
+    
+        // Redirect to the next quiz question or result page
+        if (currentQuestionIndex < allQuestion.size()) { // Use allQuestion.size()
+            return "redirect:/AlbumQuiz/" + quiz.getId() + "/question/" + allQuestion.get(currentQuestionIndex).getId();
+        } else {
+            model.addAttribute("score", score);
+            allQuestion.clear();
+            allAlbumQuizzes.remove(quiz);
+            return "quizzes/quizResult";
+        }
+    }
     // @GetMapping("/quizzes/AlbumCoverQuiz/{questionId}")
     // public String getQuiz(@PathVariable Long questionId, Model model) {
     //     if (currentQuestionIndex < allQuizzes.size()) {

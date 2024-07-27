@@ -1,5 +1,6 @@
 package com.group6.harmoniq.models;
 
+
 public class QuizQuestion {
     private Long id;
     private String question_url;
@@ -12,12 +13,16 @@ public class QuizQuestion {
     public QuizQuestion() {
     }
 
-    public QuizQuestion(String question_url, String answer, String option1, String option2, String option3) {
+    public QuizQuestion(Long id, String question_url, String answer, String option1, String option2, String option3) {
+        this.id = id;
         this.question_url = question_url;
         this.answer = answer;
         this.option1 = option1;
         this.option2 = option2;
         this.option3 = option3;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

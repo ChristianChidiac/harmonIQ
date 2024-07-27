@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
+<head>
+    <title>Album Cover Quizzes</title>
+</head>
 <body>
     <div class="wrapper">
         <header>
@@ -10,21 +13,29 @@
             <nav>
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/quizzes/getAll">Quiz</a></li>
+                    <li><a href="/quiz.html">Quiz</a></li>
                 </ul>
             </nav>
         </header>
-        <h1>Quiz Results</h1>
-        <p>Your Score: <span th:text="${score}"></span></p>
+    </div>
+    <div class="quiz-container">
+        <a th:each="quiz : ${albumQuizzes}" 
+           th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}"  
+           class="quiz-button">
+            <img th:src="${quiz.questions[0].getQuestionUrl()}" 
+                 alt="Album Cover" 
+                 class="quiz-image" />
+        </a>
     </div>
     <footer>
+        <a href="/quizzes/AlbumQuiz/generate"><button class="logout-button">Generate</button></a>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
 </body>
 <script>
     var logoutButton = document.getElementById("logoutButton");
     logoutButton.addEventListener('click', userLogout);
-    
+
     function userLogout(evt) {
         const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
         setTimeout(() => logoutPopup.close(), 500);

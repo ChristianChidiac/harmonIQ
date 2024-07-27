@@ -138,6 +138,16 @@ public class SpotifyController {
                     User user = getUserProfile(accessToken);
                     user.setTopArtist(getTopArtist(accessToken));
                     user.setTopTrack(getTopTrack(accessToken));
+                    System.out.println("SpotifyID" + user.getSpotifyId());
+                    System.out.println("DisplayName" + user.getDisplayName());
+                    System.out.println("Email" + user.getEmail());
+                    System.out.println("Followers" + user.getFollowers());
+                    System.out.println("ImageURL" + user.getImageUrl());
+                    System.out.println("TopArtist" + user.getTopArtist());
+                    System.out.println("TopTrack" + user.getTopTrack());
+                    System.out.println("externalSpotifyUrl" + user.getExternalSpotifyUrl());
+                    
+
 
                     List<Track> topTracks = getTopTracks(accessToken);
                     List<Artist> topArtists = getTopArtists(accessToken);
@@ -145,7 +155,13 @@ public class SpotifyController {
                     session.setAttribute("access_token", accessToken);
                     session.setAttribute("refresh_token", refreshToken);
 
-                    saveUserToDatabase(user);
+                    session.setAttribute("topTracks", topTracks);
+                    session.setAttribute("topArtists", topArtists);
+
+                    model.addAttribute("topTracks", topTracks);
+                    model.addAttribute("topArtists", topArtists);
+
+
                     session.setAttribute("currentUser", user);
 
 
