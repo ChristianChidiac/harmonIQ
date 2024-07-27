@@ -16,6 +16,7 @@ import com.group6.harmoniq.models.Quiz;
 import com.group6.harmoniq.models.QuizRepository;
 import com.group6.harmoniq.models.RecognitionQuiz;
 import com.group6.harmoniq.models.RecognitionQuizRepository;
+import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -38,6 +39,12 @@ public class QuizController {
     private int score = 0;  // Add score variable
     private int currentRecognitionQuestionIndex = 0;
     private int recognitionScore = 0;
+    private User currentUser; // Declare user as an attribute of the controller
+
+    private void setCurrentUser(HttpSession session) {
+        this.currentUser = (User) session.getAttribute("currentUser");
+    }
+
 
     @GetMapping("/quizzes/AlbumCoverQuiz")
     public String startQuiz(Model model) {
@@ -49,11 +56,11 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes/AlbumCoverQuiz/{questionId}")
-    public String getQuiz(@PathVariable Long questionId, Model model, HttpSession session) {
+    public String getQuiz(@PathVariable Long questionId, Model model) {
         if (currentQuestionIndex < allQuizzes.size()) {
             Quiz quiz = quizRepository.findById(questionId).orElse(null); // Get the current quiz by Id
 
-            // Error handling if no quiz found
+            // Error handling if no quiz or user found
             if (quiz == null) {
                 // Handle the case where no quiz is found
                 return "quizzes/errorPage"; // Redirect to an error page or display a message
@@ -67,7 +74,6 @@ public class QuizController {
             model.addAttribute("questionId", quiz.getId());
             return "quizzes/AlbumCoverQuiz"; // Redirect to the quiz page
         } else {
-            userService.incrementUserQuizCount(session);
             model.addAttribute("score", score); // Add score to the model for the result page
             return "quizzes/quizResult"; // Redirect to result page when quiz is finished
         }
@@ -75,14 +81,22 @@ public class QuizController {
     
 
     @PostMapping("/quizzes/AlbumCoverQuiz/submit")
-    public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model) {
+    public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model, HttpSession session) {
+        setCurrentUser(session); // Set the current user
+
         Quiz quiz = quizRepository.findById(questionId).orElse(null);
 
-        if (quiz != null && selectedOption.equals(quiz.getAnswer())) {
-            score++; // Increment score for correct answer
+        if (quiz != null && currentUser != null) {
+            int questionScore = selectedOption.equals(quiz.getAnswer()) ? 1 : 0; // Assign score based on correctness
+            score += questionScore; // Increment score based on correctness
+
+            userService.updateQuizResults(currentUser, questionScore, 1); // Update quiz result for user
             model.addAttribute("result", "Correct!");
-        } else {
-            model.addAttribute("result", "Incorrect.");
+            if (questionScore == 1) {
+                model.addAttribute("result", "Correct!");
+            } else {
+                model.addAttribute("result", "Incorrect.");
+            }
         }
 
         currentQuestionIndex++; // Move to the next question
@@ -91,6 +105,7 @@ public class QuizController {
         if (currentQuestionIndex < allQuizzes.size()) {
             return "redirect:/quizzes/AlbumCoverQuiz/" + allQuizzes.get(currentQuestionIndex).getId();
         } else {
+            userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             model.addAttribute("score", score);
             return "quizzes/quizResult";
         }
@@ -106,7 +121,7 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes/recognitionQuiz/{questionId}")
-    public String getRecognitionQuizQuestion(@PathVariable Long questionId, Model model, HttpSession session) {
+    public String getRecognitionQuizQuestion(@PathVariable Long questionId, Model model) {
         if (currentRecognitionQuestionIndex < allRecognitionQuestions.size()) {
             RecognitionQuiz recognitionQuestion = recognitionQuizRepository.findById(questionId).orElse(null); // Get the current quiz by Id
 
@@ -123,21 +138,25 @@ public class QuizController {
             model.addAttribute("questionId", recognitionQuestion.getId());
             return "quizzes/recognitionQuiz"; // Redirect to the quiz page
         } else {
-            userService.incrementUserQuizCount(session);
             model.addAttribute("score", recognitionScore); // Add score to the model for the result page
             return "quizzes/quizResult"; // Redirect to result page when quiz is finished
         }
     }
     
     @PostMapping("/quizzes/recognitionQuiz/submit")
-    public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model) {
+    public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model, HttpSession session) {
+        setCurrentUser(session);
         RecognitionQuiz recognitionQuestion = recognitionQuizRepository.findById(questionId).orElse(null);
 
-        if (recognitionQuestion != null && selectedOption.equals(recognitionQuestion.getAnswer())) {
-            recognitionScore++; // Increment score for correct answer
-            model.addAttribute("result", "Correct!");
-        } else {
-            model.addAttribute("result", "Incorrect.");
+        if (recognitionQuestion != null && currentUser != null) {
+            int questionScore = selectedOption.equals(recognitionQuestion.getAnswer()) ? 1 : 0; // Assign score based on correctness
+            recognitionScore += questionScore; // Increment score based on correctness
+            userService.updateQuizResults(currentUser, questionScore, 1); // Update quiz result for user
+            if (questionScore == 1) {
+                model.addAttribute("result", "Correct!");
+            } else {
+                model.addAttribute("result", "Incorrect.");
+            }
         }
 
         currentRecognitionQuestionIndex++; // Move to the next question
@@ -146,6 +165,7 @@ public class QuizController {
         if (currentRecognitionQuestionIndex < allRecognitionQuestions.size()) {
             return "redirect:/quizzes/recognitionQuiz/" + allRecognitionQuestions.get(currentRecognitionQuestionIndex).getId();
         } else {
+            userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             model.addAttribute("score", recognitionScore);
             return "quizzes/quizResult";
         }
