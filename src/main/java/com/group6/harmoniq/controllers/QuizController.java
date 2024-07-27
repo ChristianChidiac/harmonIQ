@@ -213,52 +213,6 @@ public class QuizController {
             return "quizzes/quizResult";
         }
     }
-    // @GetMapping("/quizzes/AlbumCoverQuiz/{questionId}")
-    // public String getQuiz(@PathVariable Long questionId, Model model) {
-    //     if (currentQuestionIndex < allQuizzes.size()) {
-    //         Quiz quiz = quizRepository.findById(questionId).orElse(null); // Get the current quiz by Id
-
-    //         // Error handling if no quiz found
-    //         if (quiz == null) {
-    //             // Handle the case where no quiz is found
-    //             return "quizzes/errorPage"; // Redirect to an error page or display a message
-    //         }
-
-    //         List<String> options = Arrays.asList(quiz.getAnswer(), quiz.getOption1(), quiz.getOption2(), quiz.getOption3());
-    //         Collections.shuffle(options);
-
-    //         model.addAttribute("quiz", quiz);
-    //         model.addAttribute("options", options);
-    //         model.addAttribute("questionId", quiz.getId());
-    //         return "quizzes/AlbumCoverQuiz"; // Redirect to the quiz page
-    //     } else {
-    //         model.addAttribute("score", score); // Add score to the model for the result page
-    //         return "quizzes/quizResult"; // Redirect to result page when quiz is finished
-    //     }
-    // }
-    
-
-    // @PostMapping("/quizzes/AlbumCoverQuiz/submit")
-    // public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, Model model) {
-    //     Quiz quiz = quizRepository.findById(questionId).orElse(null);
-
-    //     if (quiz != null && selectedOption.equals(quiz.getAnswer())) {
-    //         score++; // Increment score for correct answer
-    //         model.addAttribute("result", "Correct!");
-    //     } else {
-    //         model.addAttribute("result", "Incorrect.");
-    //     }
-
-    //     currentQuestionIndex++; // Move to the next question
-
-    //     // Redirect to the next quiz question or result page
-    //     if (currentQuestionIndex < allQuizzes.size()) {
-    //         return "redirect:/quizzes/AlbumCoverQuiz/" + allQuizzes.get(currentQuestionIndex).getId();
-    //     } else {
-    //         model.addAttribute("score", score);
-    //         return "quizzes/quizResult";
-    //     }
-    // }
 
     @GetMapping("/quizzes/recognitionQuiz")
     public String startRecognitionQuiz(Model model) {
