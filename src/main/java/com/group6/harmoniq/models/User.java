@@ -43,6 +43,13 @@ public class User {
 
     private int quizCount = 0;
 
+    private int totalQuestionsAnswered = 0;
+
+    private int totalCorrectAnswers = 0;
+
+    private double quizScoreAverage = 0.0;
+    
+
     // Default is regular user
     private Boolean isAdmin = false;
     
@@ -152,6 +159,31 @@ public class User {
     public void incrementQuizCount() {
         this.quizCount++;
     }
+
+    public int getTotalCorrectAnswers() {
+        return totalCorrectAnswers;
+    }
+
+    public int getTotalQuestionsAnswered() {
+        return totalQuestionsAnswered;
+    }
+
+    public double getQuizScoreAverage() {
+        return quizScoreAverage;
+    }
+
+    public void setTotalCorrectAnswers(int totalCorrectAnswers) {
+        this.totalCorrectAnswers = totalCorrectAnswers;
+    }
+
+    public void setTotalQuestions(int totalQuestionsAnswered) {
+        this.totalQuestionsAnswered = totalQuestionsAnswered;
+    }
+
+    public void setQuizScoreAverage(double quizScoreAverage) {
+        this.quizScoreAverage = quizScoreAverage;
+    }
+
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
