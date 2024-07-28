@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
+<link rel="stylesheet" th:href="@{/css/all-album-quizzes.css}">
 <head>
     <title>Album Cover Quizzes</title>
 </head>
@@ -19,13 +19,21 @@
         </header>
     </div>
     <div class="quiz-container">
-        <a th:each="quiz : ${albumQuizzes}" 
-           th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}"  
-           class="quiz-button">
-            <img th:src="${quiz.questions[0].getQuestionUrl()}" 
-                 alt="Album Cover" 
-                 class="quiz-image" />
-        </a>
+        <div class="quiz-card" th:each="quiz : ${albumQuizzes}">
+            <div class="quiz-header">
+                <h2 class="quiz-number">Album Quiz</h2>
+            </div>
+            <div class="quiz-content">
+                <a th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}" class="quiz-link">
+                    <img th:src="${quiz.questions[0].getQuestionUrl()}" 
+                        alt="Album Cover" 
+                        class="quiz-image" />
+                </a>
+            </div>
+            <div class="quiz-footer">
+                <a th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}" class="quiz-button">Play</a>            
+            </div>
+        </div>
     </div>
     <footer>
         <a href="/quizzes/AlbumQuiz/generate"><button class="logout-button">Generate</button></a>

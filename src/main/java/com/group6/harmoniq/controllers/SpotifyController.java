@@ -301,7 +301,6 @@ public class SpotifyController {
         headers.set("Authorization", "Bearer " + accessToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        System.out.println("Started to get top 10 artists");
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
@@ -348,7 +347,6 @@ public class SpotifyController {
 
     @RequestMapping("/quiz")
     public String quiz(HttpSession session, RedirectAttributes redirectAttributes) {
-        System.out.println("Entered quiz method");
 
         String accessToken = (String) session.getAttribute("access_token");
         String refreshToken = (String) session.getAttribute("refresh_token");
@@ -361,7 +359,6 @@ public class SpotifyController {
         try {
             List<Track> tracks = getTopTracks(accessToken); 
             session.setAttribute("tracks", tracks);
-            System.out.println("Passed all tracks to session");
         } catch (HttpClientErrorException.Unauthorized ex) { // Handle 401 Unauthorized error (token expired)
             if (refreshToken != null) {
                 // Attempt to refresh the access token
