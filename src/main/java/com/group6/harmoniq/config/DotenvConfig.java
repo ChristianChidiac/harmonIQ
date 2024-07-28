@@ -1,4 +1,4 @@
-package com.group6.config;
+package com.group6.harmoniq.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

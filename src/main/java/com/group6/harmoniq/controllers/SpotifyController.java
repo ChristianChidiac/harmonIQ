@@ -32,7 +32,6 @@ import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
 import com.group6.harmoniq.services.SpotifyService;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -49,13 +48,17 @@ public class SpotifyController {
 
     private String accessToken;
     private final SpotifyService spotifyService;
+   
+    private final RestTemplate restTemplate;
 
-    public SpotifyController(SpotifyService spotifyService) {
+    public SpotifyController(SpotifyService spotifyService, RestTemplate restTemplate) {
         this.spotifyService = spotifyService;
+        this.restTemplate = restTemplate;
 
         this.client_id = this.spotifyService.getClientId();
         this.client_secret = this.spotifyService.getClientSecret();
         this.redirect_uri = this.spotifyService.getRedirectUri();
+        System.out.println("HERE IS THE CLIENT ID " + client_id);
     }
 
     public String getAccessToken() {
@@ -69,6 +72,7 @@ public class SpotifyController {
         SecureRandom secureRandom;
         try {
             secureRandom = SecureRandom.getInstanceStrong();
+           
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -86,6 +90,8 @@ public class SpotifyController {
                 .queryParam("redirect_uri", redirect_uri)
                 .queryParam("state", state)
                 .toUriString();
+      
+          
 
         return "redirect:" + authUrl;
     }
@@ -110,7 +116,6 @@ public class SpotifyController {
             bodyParams.put("redirect_uri", redirect_uri);
             bodyParams.put("grant_type", "authorization_code");
 
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set("Authorization", authHeader);
@@ -129,21 +134,21 @@ public class SpotifyController {
                 try {
                     Map<String, Object> body = responseEntity.getBody();
                     accessToken = (String) body.get("access_token");
-    
+                    
                     User user = getUserProfile(accessToken);
                     user.setTopArtist(getTopArtist(accessToken));
                     user.setTopTrack(getTopTrack(accessToken));
-
+                   
                     saveUserToDatabase(user);
                     session.setAttribute("currentUser", user);
-
+                    session.setAttribute("accessToken", accessToken);
 
                     model.addAttribute("user", user);
     
                 } catch (Exception e) {
                     model.addAttribute("error", e.getMessage());
                 }
-
+               
                 return "profile";
             } else {
                 return "redirect:/index.html";
@@ -176,7 +181,7 @@ public class SpotifyController {
     private void getFollowedArtists(String accessToken, Model model) {
 
         String url = "https://api.spotify.com/v1/me/following?type=artist";
-        RestTemplate restTemplate = new RestTemplate();
+        //RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -196,7 +201,7 @@ public class SpotifyController {
     private User getUserProfile(String accessToken) throws Exception {
 
         String url = "https://api.spotify.com/v1/me";
-        RestTemplate restTemplate = new RestTemplate();
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -234,9 +239,8 @@ public class SpotifyController {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
 
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
             Map<String, Object> topArtistJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
 
             var topArtist = new Artist();
@@ -266,7 +270,7 @@ public class SpotifyController {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
-            RestTemplate restTemplate = new RestTemplate();
+
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
             
             Map<String, Object> topTrackJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
@@ -295,4 +299,5 @@ public class SpotifyController {
             throw new Exception("Failed to get top tracks", e);
         }
     }
+
 }
