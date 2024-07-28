@@ -35,36 +35,42 @@
                 </div>
             </div>
             <div class="content-section">  
-                <div th:each="artist, iterStat : ${topArtists}" class="card" th:if="${iterStat.index < 5}"> 
-                    <div class="card-header">
-                        <p class="order" th:text = "${iterStat.index + 1}"></p>
-                    </div>
-                    <div class="card-content">
-                        <a th:href="${artist.spotifyUrl}" target="_blank">
-                            <img th:src="${artist.imageUrl}" th:alt="${artist.name}" class="artist-image">
-                        </a>
-                    </div>
-                    <div class="card-footer">
-                        <a th:href="${artist.spotifyUrl}" target="_blank">
-                            <p th:text="${artist.name}" class="artist-name"></p>
-                        </a>
+                <h2>Top Artists</h2>
+                <div class="card-container">
+                    <div th:each="artist, iterStat : ${topArtists}" class="card" th:if="${iterStat.index < 5}">
+                        <div class="card-header">
+                            <p class="order" th:text = "${iterStat.index + 1}"></p>
+                        </div>
+                        <div class="card-content">
+                            <a th:href="${artist.spotifyUrl}" target="_blank">
+                                <img th:src="${artist.imageUrl}" th:alt="${artist.name}" class="artist-image">
+                            </a>
+                        </div>
+                        <div class="card-footer">
+                            <a th:href="${artist.spotifyUrl}" target="_blank">
+                                <p th:text="${artist.name}" class="artist-name"></p>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="content-section">
-                <div th:each="track, iterStat : ${topTracks}"class="card" th:if="${iterStat.index < 5}">
-                    <div class="card-header">
-                        <p class="order" th:text ="${iterStat.index + 1}"></p>
-                    </div>
-                    <div class="card-content">
-                        <a th:href="${track.spotifyUrl}" target="_blank">
-                            <img th:src="${track.albumCoverUrl}" th:alt="${track.name}">
-                        </a>
-                    </div>
-                    <div class="card-footer">
-                        <a th:href="${track.spotifyUrl}" target="_blank">
-                            <p th:text="${track.name}" class="track-name"></p>
-                        </a>
+                <h2>Top Tracks</h2>
+                <div class="card-container">
+                    <div th:each="track, iterStat : ${topTracks}"class="card" th:if="${iterStat.index < 5}">
+                        <div class="card-header">
+                            <p class="order" th:text ="${iterStat.index + 1}"></p>
+                        </div>
+                        <div class="card-content">
+                            <a th:href="${track.spotifyUrl}" target="_blank">
+                                <img th:src="${track.albumCoverUrl}" th:alt="${track.name}">
+                            </a>
+                        </div>
+                        <div class="card-footer">
+                            <a th:href="${track.spotifyUrl}" target="_blank">
+                                <p th:text="${track.name}" class="track-name"></p>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
