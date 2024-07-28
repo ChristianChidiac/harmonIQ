@@ -57,7 +57,6 @@ public class QuizController {
             return "quizzes/EmptyTracks"; // Or some other appropriate action
         }
         allAlbumQuizzes.add(createQuizFromTracks());
-        System.out.println("Quiz generated");
         return "redirect:/quizzes/AlbumQuiz/getAll";
     }
 
@@ -65,7 +64,6 @@ public class QuizController {
     public String getAllAlbumQuizzes(HttpSession session, Model model) {
         try{
             model.addAttribute("albumQuizzes", allAlbumQuizzes);
-            System.out.println("Get All method called");
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
@@ -79,9 +77,7 @@ public class QuizController {
 
     public AlbumQuiz createQuizFromTracks() {
         List<Track> tracks = new ArrayList<>(allTracks);
-        System.out.println("Creating quiz from tracks");
         AlbumQuiz quiz = new AlbumQuiz();
-        System.out.println("Quiz ID: " + quizId);
         quiz.setId(quizId++);
         Collections.shuffle(tracks); // Randomize track order
         int numQuestions = 5; // Max 5 questions
@@ -89,8 +85,6 @@ public class QuizController {
         for (int i = 0; i < numQuestions; i++) {
             Track answerTrack = tracks.get(i);
             QuizQuestion question = createQuestion(answerTrack, tracks);
-            System.out.println("Question created");
-            System.out.println("Question ID: " + questionId);
             question.setId(questionId++);
             quiz.getQuestions().add(question); 
         }
@@ -98,7 +92,6 @@ public class QuizController {
     }
 
     private QuizQuestion createQuestion(Track answerTrack, List<Track> allTracks) {
-        System.out.println("Creating question for track: " + answerTrack.getName());
         QuizQuestion question = new QuizQuestion();
         question.setQuestionUrl(answerTrack.getAlbumCoverUrl());
         question.setAnswer(answerTrack.getName());
@@ -117,27 +110,17 @@ public class QuizController {
 
     @GetMapping("/AlbumQuiz/{quizId}")
     public String startQuiz(@PathVariable Long quizId, HttpSession session, Model model) {
-            // Retrieve the quiz by quizId
         AlbumQuiz quiz = getQuizById(quizId);
-        if (quiz == null) {
-            return "quizzes/errorPage";  // redirect to an error page 
-        }
-        score = 0; // Reset score when starting a new quiz
-        currentQuestionIndex = 0; // Reset question index when starting a new quiz
-        // Store quiz details in session for subsequent question displays
-        session.setAttribute("quiz", quiz); 
-        session.setAttribute("score", 0); 
-        // Retrieve the first question after shuffling (if needed)
-        System.out.println("Quiz started");
-        System.out.println("Quiz ID: " + quiz.getId());
-        System.out.println("Quiz questions: " + quiz.getQuestions().get(0).getQuestionUrl());
+        if (quiz == null) { return "quizzes/errorPage"; }
+        score = 0;
+        currentQuestionIndex = 0;
         List<QuizQuestion> allQuestions = quiz.getQuestions();
         Long firstQuestionId = allQuestions.get(0).getId();
+
+        session.setAttribute("quiz", quiz); 
+        session.setAttribute("score", 0); 
         session.setAttribute("questionId", firstQuestionId);
         session.setAttribute("questions", allQuestions);
-        System.out.println("First question ID: " + firstQuestionId);
-        System.out.println("First question URL: " + allQuestions.get(0).getQuestionUrl());
-        System.out.println("quiz is not null");
 
         return "redirect:/AlbumQuiz/" + quizId + "/question/" + firstQuestionId;
     }
@@ -159,16 +142,10 @@ public class QuizController {
 
     @GetMapping("/AlbumQuiz/{quizId}/question/{questionId}")
     public String getQuiz(@PathVariable Long questionId, @PathVariable Long quizId, HttpSession session, Model model) {
-        System.out.println("Getting quiz");
-        System.out.println("Quiz ID: " + quizId);
-        System.out.println("Question ID: " + questionId);
         Long currentQuestionId = questionId;
         QuizQuestion question = getQuestionById(currentQuestionId, getQuizById(quizId));
-        if (currentQuestionId == null) {
-            return "quizzes/errorPage";  // redirect to an error page 
-        }
-        if (currentQuestionIndex >= 5) {
-            // Redirect to the result page
+        if (currentQuestionId == null) { return "quizzes/errorPage";}
+        if (currentQuestionIndex >= 5) { 
             model.addAttribute("score", score);
             return "quizzes/quizResult";
         } else {
@@ -180,9 +157,9 @@ public class QuizController {
             model.addAttribute("questionId", question.getId());
             model.addAttribute("quizId", quizId);
         }
-            
-            return "quizzes/AlbumCoverQuiz"; // Redirect to the quiz page
+            return "quizzes/AlbumCoverQuiz";
     }
+
 
     @PostMapping("/AlbumQuiz/submit")
     public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, @RequestParam("quizId") Long quizId, Model model, HttpSession session) {
@@ -190,23 +167,18 @@ public class QuizController {
         AlbumQuiz quiz = getQuizById(quizId);
         List<QuizQuestion> allQuestion = quiz.getQuestions();
     
-        // check the size of allQuestion here
-        if (allQuestion.size() < 5) {
-            // Handle the case where there are less than 5 questions. 
-            return "quizzes/errorPage"; 
-        }
+        if (allQuestion.size() < 5) { return "quizzes/errorPage"; }
     
         QuizQuestion question = allQuestion.get(currentQuestionIndex);
         if (question != null && selectedOption.equals(question.getAnswer())) {
-            score++; // Increment score for correct answer
+            score++;
             model.addAttribute("result", "Correct!"); //TODO: add score design and logic
         } else {
             model.addAttribute("result", "Incorrect.");
         }
-        currentQuestionIndex++; // Move to the next question
+        currentQuestionIndex++;
     
-        // Redirect to the next quiz question or result page
-        if (currentQuestionIndex < allQuestion.size()) { // Use allQuestion.size()
+        if (currentQuestionIndex < allQuestion.size()) { 
             return "redirect:/AlbumQuiz/" + quiz.getId() + "/question/" + allQuestion.get(currentQuestionIndex).getId();
         } else {
             model.addAttribute("score", score);

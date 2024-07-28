@@ -136,21 +136,16 @@ public class SpotifyController {
                     refreshToken = (String) body.get("refresh_token");
     
                     User user = getUserProfile(accessToken);
-                    user.setTopArtist(getTopArtist(accessToken));
-                    user.setTopTrack(getTopTrack(accessToken));
-                    System.out.println("SpotifyID" + user.getSpotifyId());
-                    System.out.println("DisplayName" + user.getDisplayName());
-                    System.out.println("Email" + user.getEmail());
-                    System.out.println("Followers" + user.getFollowers());
-                    System.out.println("ImageURL" + user.getImageUrl());
-                    System.out.println("TopArtist" + user.getTopArtist());
-                    System.out.println("TopTrack" + user.getTopTrack());
-                    System.out.println("externalSpotifyUrl" + user.getExternalSpotifyUrl());
-                    
-
 
                     List<Track> topTracks = getTopTracks(accessToken);
                     List<Artist> topArtists = getTopArtists(accessToken);
+
+                    user.setTopArtist(topArtists.get(0));
+                    user.setTopTrack(topTracks.get(0));
+                    
+
+
+                    
 
                     session.setAttribute("access_token", accessToken);
                     session.setAttribute("refresh_token", refreshToken);
@@ -248,78 +243,6 @@ public class SpotifyController {
             return user;
         } catch (HttpClientErrorException e) {
             throw new Exception("Failed to get user profile", e);
-        }
-    }
-
-
-    private Artist getTopArtist(String accessToken) throws Exception {
-
-        String url = "https://api.spotify.com/v1/me/top/artists?limit=1";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
-
-            Map<String, Object> topArtistJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
-
-            var topArtist = new Artist();
-            topArtist.setName((String) topArtistJson.get("name"));
-            
-            var externalUrls = (Map<String, Object>) topArtistJson.get("external_urls");
-            topArtist.setSpotifyUrl((String) externalUrls.get("spotify"));
-            
-            var images = ((List<Map<String, Object>>) topArtistJson.get("images"));
-            if (images.size() > 0) {
-                topArtist.setImageUrl((String) images.get(0).get("url"));
-            }
-
-            return topArtist;
-        } catch (HttpClientErrorException e) {
-            throw new Exception("Failed to get top artists", e );
-        }
-    }
-
-    private Track getTopTrack(String accessToken) throws Exception {
-
-        String url = "https://api.spotify.com/v1/me/top/tracks?limit=1";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
-            
-            Map<String, Object> topTrackJson = ((List<Map<String, Object>>) response.getBody().get("items")).get(0);
-
-            var topTrack = new Track();
-
-            topTrack.setName((String) topTrackJson.get("name"));
-
-            var artistsJson = (List<Map<String, Object>>) topTrackJson.get("artists");
-            var artists = artistsJson.stream().map(artistJson -> {
-                var artist = new Artist();
-                artist.setName((String) artistJson.get("name"));
-                return artist;
-            }).toList();
-            topTrack.setArtists(artists);
-
-            var externalUrls = (Map<String, Object>) topTrackJson.get("external_urls");
-            topTrack.setSpotifyUrl((String) externalUrls.get("spotify"));
-
-            var album = (Map<String, Object>) topTrackJson.get("album");
-            var albumCoverArtUrl = ((List<Map<String, Object>>) album.get("images")).get(0).get("url");
-            topTrack.setAlbumCoverUrl((String) albumCoverArtUrl);
-
-            return topTrack;
-        } catch (HttpClientErrorException e) {
-            throw new Exception("Failed to get top tracks", e);
         }
     }
 
