@@ -58,7 +58,6 @@ public class SpotifyController {
         this.client_id = this.spotifyService.getClientId();
         this.client_secret = this.spotifyService.getClientSecret();
         this.redirect_uri = this.spotifyService.getRedirectUri();
-        System.out.println("HERE IS THE CLIENT ID " + client_id);
     }
 
     public String getAccessToken() {
@@ -91,8 +90,6 @@ public class SpotifyController {
                 .queryParam("state", state)
                 .toUriString();
       
-          
-
         return "redirect:" + authUrl;
     }
 

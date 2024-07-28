@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,9 +35,9 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test") 
 public class QuizControllerTest {
 
     @Autowired
@@ -49,13 +51,10 @@ public class QuizControllerTest {
 
     @BeforeAll
     static void loadEnv() {
-      if(!("development".equals(System.getenv("ENVIRONMENT"))))
-      {
-          Dotenv dotenv = Dotenv.configure().load();
+      Dotenv dotenv = Dotenv.configure().filename(".env.test").load();
           dotenv.entries().forEach(entry -> {
           System.setProperty(entry.getKey(), entry.getValue());
          });
-      }
     }
 
     @BeforeEach
