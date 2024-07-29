@@ -34,6 +34,10 @@ public class User {
 
     private String externalSpotifyUrl;
 
+    private int addedSongs = 0;
+
+    private int addedSongsLimit = 5;
+
     @Transient
     private Artist topArtist;
 
@@ -42,6 +46,8 @@ public class User {
 
     // Default is regular user
     private Boolean isAdmin = false;
+
+    private Boolean isCollaborator = false;
     
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -54,16 +60,43 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String spotifyId, String displayName, String email, int followers,  String imageUrl, String externalSpotifyUrl, Artist topArtist, Track topTrack, Boolean isAdmin) {
+    public User(String spotifyId, String displayName, String email, int followers,  String imageUrl, String externalSpotifyUrl, int addedSongs, int addedSongsLimit, Artist topArtist, Track topTrack, Boolean isAdmin, Boolean isCollaborator) {
         this.spotifyId = spotifyId;
         this.displayName = displayName;
         this.email = email;
         this.followers = followers;
         this.imageUrl = imageUrl;
         this.externalSpotifyUrl = externalSpotifyUrl;
+        this.addedSongs = addedSongs;
+        this.addedSongsLimit = addedSongsLimit;
         this.topArtist = topArtist;
         this.topTrack = topTrack;
         this.isAdmin = isAdmin != null ? isAdmin : false; // Ensures admin is not null but still defaults to false
+        this.isCollaborator = isCollaborator != null ? isCollaborator : false; // Ensures collaborator is not null but still defaults to false
+    }
+
+    public int getAddedSongs() {
+        return addedSongs;
+    }
+
+    public void setAddedSongs(int addedSongs) {
+        this.addedSongs = addedSongs;
+    }
+
+    public int getAddedSongsLimit() {
+        return addedSongsLimit;
+    }
+
+    public void setAddedSongsLimit(int addedSongsLimit) {
+        this.addedSongsLimit = addedSongsLimit;
+    }
+
+    public Boolean getIsCollaborator() {
+        return isCollaborator;
+    }
+
+    public void setIsCollaborator(Boolean isCollaborator) {
+        this.isCollaborator = isCollaborator;
     }
 
     public long getUId() {
