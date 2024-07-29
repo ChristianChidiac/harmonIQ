@@ -1,0 +1,9 @@
+main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-align: center;
+    padding: 2rem;
+    gap: 1rem;
+}
