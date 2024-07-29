@@ -35,9 +35,12 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+  "SPOTIFY_CLIENT_ID=TestClientId",
+     "SPOTIFY_CLIENT_SECRET=TestClientSecret",
+     "SPOTIFY_REDIRECT_URI=TestRedirectURI"
+ })
 @AutoConfigureMockMvc
-@ActiveProfiles("test") 
 public class QuizControllerTest {
 
     @Autowired

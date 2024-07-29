@@ -3,6 +3,7 @@ package com.group6.harmoniq.controllers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,12 +34,17 @@ import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
+@SpringBootTest(properties = {
+ "SPOTIFY_CLIENT_ID=TestClientId",
+    "SPOTIFY_CLIENT_SECRET=TestClientSecret",
+    "SPOTIFY_REDIRECT_URI=TestRedirectURI"
+})
 @AutoConfigureMockMvc
-@ActiveProfiles("test") 
 public class SpotifyControllerTest {
 
     @MockBean
@@ -61,6 +69,8 @@ public class SpotifyControllerTest {
         System.setProperty(entry.getKey(), entry.getValue());
        });
     }
+
+
 
     @Test
     void testLogin() throws Exception {
