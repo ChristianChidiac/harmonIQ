@@ -38,12 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-
-@SpringBootTest(properties = {
- "SPOTIFY_CLIENT_ID=TestClientId",
-    "SPOTIFY_CLIENT_SECRET=TestClientSecret",
-    "SPOTIFY_REDIRECT_URI=TestRedirectURI"
-})
+@ActiveProfiles("test")
+@SpringBootTest
 @AutoConfigureMockMvc
 public class SpotifyControllerTest {
 
