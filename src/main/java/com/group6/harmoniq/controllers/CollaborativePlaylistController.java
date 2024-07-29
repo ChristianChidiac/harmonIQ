@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,17 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.group6.harmoniq.controllers.*;
-import com.group6.harmoniq.models.Artist;
-import com.group6.harmoniq.models.Track;
 import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
 
@@ -33,10 +29,10 @@ import jakarta.servlet.http.HttpSession;
 public class CollaborativePlaylistController {
 
     @Autowired
-    private SpotifyController controller;
-
-    @Autowired
     private UserRepository userRepository;
+
+    @Value("${spotify.playlist.id}")
+    private String playlistId;
 
     private int index = 0;
 
@@ -44,9 +40,7 @@ public class CollaborativePlaylistController {
 @GetMapping("/playlist")
 public String showCollaborativePlaylist(HttpSession session, Model model)
 {
-    //Make playlist_id an environment variable
-    String playlist_id = "57E2lj7B6neeSqhqCs51RJ";
-    String playlistUrlEndpoint = "https://api.spotify.com/v1/playlists/" + playlist_id;
+    String playlistUrlEndpoint = "https://api.spotify.com/v1/playlists/" + playlistId;
      
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", "Bearer " + (String) session.getAttribute("accessToken"));
@@ -125,9 +119,7 @@ public String showAddSongsPopup(HttpSession session, Model model)
 @PostMapping("/addSong")
 public String addSongAndNextSong(@RequestParam("trackUri") String trackUri, HttpSession session, Model model)
 {
-    //Make playlist_id an environment variable
-    String playlist_id = "57E2lj7B6neeSqhqCs51RJ";
-    String url = "https://api.spotify.com/v1/playlists/" + playlist_id +"/tracks";
+    String url = "https://api.spotify.com/v1/playlists/" + playlistId +"/tracks";
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", "Bearer " + (String) session.getAttribute("accessToken"));
