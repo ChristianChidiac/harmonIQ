@@ -89,9 +89,7 @@ public class QuizController {
         if (quiz != null && currentUser != null) {
             int questionScore = selectedOption.equals(quiz.getAnswer()) ? 1 : 0; // Assign score based on correctness
             score += questionScore; // Increment score based on correctness
-
             userService.updateQuizResults(currentUser, questionScore, 1); // Update quiz result for user
-            model.addAttribute("result", "Correct!");
             if (questionScore == 1) {
                 model.addAttribute("result", "Correct!");
             } else {
