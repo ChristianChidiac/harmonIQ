@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -35,8 +37,10 @@ public class User {
 
     private String externalSpotifyUrl;
 
+    @Column(columnDefinition = "int default 0")
     private int addedSongs = 0;
 
+    @Column(columnDefinition = "int default 5")
     private int addedSongsLimit = 5;
 
     @Transient
@@ -45,23 +49,27 @@ public class User {
     @Transient
     private Track topTrack;
 
+    @Column(columnDefinition = "int default 0")
     private int quizCount = 0;
 
+    @Column(columnDefinition = "int default 0")
     private int totalQuestionsAnswered = 0;
 
+    @Column(columnDefinition = "int default 0")
     private int totalCorrectAnswers = 0;
 
+    @Column(columnDefinition = "double precision default 0.0")
     private double quizScoreAverage = 0.0;
     
-
-    // Default is regular user
+    @Column(columnDefinition = "boolean default false")
     private Boolean isAdmin = false;
 
+    @Column(columnDefinition = "boolean default false")
     private Boolean isCollaborator = false;
     
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private final Date createdAt = new Date();
+    private Date createdAt = new Date();
 
     @Column(updatable = true)
     @Temporal(TemporalType.TIMESTAMP)
@@ -230,6 +238,14 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
 
-    
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
 }
