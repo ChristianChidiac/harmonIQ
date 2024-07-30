@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/css/all-album-quizzes.css}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link rel="stylesheet" th:href="@{/css/all-album-quizzes.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap" rel="stylesheet">
+</head>
 <body>
     <div class="wrapper">
         <header>
@@ -10,7 +16,8 @@
             <nav>
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/quizzes/getAll">Quiz</a></li>
+                    <li><a href="/quizzes/getAll">Album Quiz</a></li>
+                    <li><a href="/playlist">Collaborative Playlist</a></li>
                 </ul>
             </nav>
         </header>
