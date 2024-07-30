@@ -34,6 +34,14 @@
                         <span class="stat-number" th:text="${user.followers}"></span>
                         <span class="stat-label">Followers</span>
                     </div>
+                    <div class="stat">
+                        <span class="stat-number" th:text="${user.quizCount}"></span>
+                        <span class="stat-label">Quizzes Played</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" th:text="${user.quizScoreAverage} + '%'"></span>
+                        <span class="stat-label">Quiz Score Average</span>
+                    </div>
                 </div>
             </div>
             <div class="content-section">  
