@@ -10,6 +10,8 @@ import java.util.List;
 
 public class QuizTest {
 
+    private AlbumQuiz albumQuiz;
+    private static final List<QuizQuestion> questions = new ArrayList<>();
     private QuizQuestion quiz;
     private static final Long id = 1L;
     private static final String question_url = "https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a";
@@ -17,10 +19,15 @@ public class QuizTest {
     private static final String option1 = "Post Malone";
     private static final String option2 = "Led Zeppelin";
     private static final String option3 = "The Rolling Stones";
+    private static final QuizQuestion quiz1 = new QuizQuestion(1L, "https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a", "Bohemian Rhapsody", "Post Malone", "Led Zeppelin", "The Rolling Stones");
+    static{
+        questions.add(quiz1);
+    }
 
     @BeforeEach
     public void setUp() {
         quiz = new QuizQuestion(id, question_url, answer, option1, option2, option3);
+        albumQuiz = new AlbumQuiz(1L, questions);
     }
 
     @Test
@@ -46,6 +53,19 @@ public class QuizTest {
     @Test
     void testGetQuestionPath() {
         assertEquals(question_url, quiz.getQuestionUrl()); 
+    }
+
+    @Test
+    void testGetQuestions() {
+        assertEquals(questions, albumQuiz.getQuestions());
+    }
+
+    @Test
+    void testSetQuestions() {
+        List<QuizQuestion> newQuestions = new ArrayList<>();
+        newQuestions.add(quiz);
+        albumQuiz.setQuestions(newQuestions);
+        assertEquals(newQuestions, albumQuiz.getQuestions());
     }
 
     @Test
