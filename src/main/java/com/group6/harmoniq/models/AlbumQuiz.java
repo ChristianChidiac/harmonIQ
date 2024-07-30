@@ -3,7 +3,6 @@ package com.group6.harmoniq.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.*;
 
 public class AlbumQuiz {
     private Long id;

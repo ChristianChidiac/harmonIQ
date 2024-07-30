@@ -143,10 +143,8 @@ public class SpotifyController {
                     user.setTopArtist(topArtists.get(0));
                     user.setTopTrack(topTracks.get(0));
                     
-
-
+                    saveUserToDatabase(user);
                     
-
                     session.setAttribute("access_token", accessToken);
                     session.setAttribute("refresh_token", refreshToken);
 
