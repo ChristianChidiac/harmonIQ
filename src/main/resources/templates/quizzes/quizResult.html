@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/css/album-cover-quiz.css}">
+<link rel="stylesheet" th:href="@{/css/all-album-quizzes.css}">
 <body>
     <div class="wrapper">
         <header>
@@ -14,9 +14,13 @@
                 </ul>
             </nav>
         </header>
-        <h1>Quiz Results</h1>
-        <p>Your Score: <span th:text="${score}"></span></p>
     </div>
+    <main>
+        <div class="result">
+            <h1>Quiz Results</h1>
+            <p>Your Score: <span th:text="${score}"></span></p>
+        <div>
+    </main>
     <footer>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
