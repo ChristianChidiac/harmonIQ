@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Songs</title>
+    <link rel="stylesheet" href="/css/add-songs.css">
+</head>
+<body>
+<main class="add-song-section">
+    <div class="add-song-content">
+        <img id="albumCoverArt" th:src="${track.album.images[0].url}" alt="Album Cover"/>
+        <p id="songName" th:text="${track.name}"></p>
+        <p>
+            <span id="artistName" th:each="artist, iterStat : ${track.artists}" th:text="${iterStat.index == 0 ? '' : ', '} + ${artist.name}"></span>
+        </p>
+
+        <p id="addSongQuestion">
+            Would you like to add this song to the playlist?
+        </p>
+
+        <div class="button-container">
+            <form th:action="@{/addSong}" method="post">
+                <input type="hidden" name="trackUri" th:value="${track.uri}" />
+                <button id="addSong" class="button-common">Yes</button>
+            </form>
+
+            <a class="songButtons" href="nextSong">
+                <button id="NoButton" class="button-common">No</button>
+            </a>
+        </div>
+
+        <button id="exitButton" class="button-common">Exit</button>
+    </div>
+</main>
+
+    <script>
+      var exitButton = document.getElementById("exitButton");
+      exitButton.addEventListener('click', function() {
+        window.parent.postMessage("closeAddSongsPopup");
+      });
+    
+    </script>
+</body>
+
+</html>

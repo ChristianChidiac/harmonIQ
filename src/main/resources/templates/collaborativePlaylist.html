@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Playlist</title>
+    <link rel="stylesheet" href="/css/collaborative-playlist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <div class="logo">
+            <a href="/toProfile"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/toProfile">Home</a></li>
+                <li><a href="/playlist">Collaborative Playlist</a></li>
+                <li><a href="/quiz.html">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="playlist-section">
+        <div class="header-container">
+            <div class="text-container">
+                <h1 th:text="${playlistName}">Playlist Name</h1>
+                <p th:text="${playlistDescription}">Playlist Description</p>
+            </div>
+            <div class="button-container">
+                <a href="joinPlaylist" id="joinButton" class="button-common">
+                    <button class="button-common">Join Playlist</button>
+                </a>
+                <a th:href="${playlistUrl}" class="button-common">View Playlist</a>
+                <button id="addSongsButton" class="button-common">Add Songs</button>
+            </div>
+        </div>
+        <div id="addSongsPage">
+            <div id="addSongs-content">
+                <iframe src="addSongsPopup" style="width:100%; height:550px; border:none;"></iframe>
+            </div>
+        </div>
+
+        <ul class="track-list">
+            <li class="track-item" th:each="item : ${tracks}">
+                <img th:src="${item.track.album.images[0].url}" th:attr="previewUrl=${item.track.preview_url}" alt="Album Cover">
+                <div class="track-info">
+                    <span class="track-name" th:text="${item.track.name}">Track Name</span> By
+                    <span class="track-artist" th:text="${item.track.artists[0].name}">Artist</span>
+                </div>
+            </li>
+        </ul>
+    </main>
+    </div>
+    <footer>
+        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
+    </footer>
+    <audio id="audioPlayer"></audio>
+    <script>
+        var joinButton = document.getElementById("joinButton");
+        joinButton.addEventListener('click', joinPlaylist);
+
+        function joinPlaylist(evt) {
+            const joinPopup = window.open('https://open.spotify.com/playlist/57E2lj7B6neeSqhqCs51RJ?si=c-Wu6lqkR4utBAU1jZPtrw&pt=3cdd977bd1bad6ce3e32eb0d372cebfe&pi=rvhXh--ySmi6T',
+             'Join Playlist', 'width=1,height=1,top=1000,left=1000');
+            setTimeout(() => logoutPopup.close(), 3000);
+
+            evt.preventDefault();
+            setTimeout(() => location.reload(), 3000);
+
+            fetch('/joinPlaylist', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }})
+        }
+
+        var addSongsButton = document.getElementById("addSongsButton");
+        addSongsButton.addEventListener('click', addSongs);
+
+        function addSongs(evt) {
+            addSongsPage.style.display = "block";
+        }
+
+        window.addEventListener('message', function(evt) {
+        if (evt.data === 'closeAddSongsPopup') {
+            addSongsPage.style.display = "none";
+            window.location.reload();
+        }
+    });
+        window.addEventListener('message', function(evt) {
+        if (evt.data === 'closePopup') {
+            addSongsPage.style.display = "none";
+        }
+    });
+
+    document.querySelectorAll('img[previewUrl]').forEach(function(evt) {
+            evt.addEventListener('click', function() {
+                var previewUrl = this.getAttribute('previewUrl');
+                if (previewUrl) {
+                    var audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = previewUrl;
+                    console.log(previewUrl);
+                    audioPlayer.play();
+
+                    setTimeout(function() {
+                        audioPlayer.pause();
+                        audioPlayer.currentTime = 0;
+                    }, 5000);
+                }
+            });
+        })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/all-album-quizzes.css}">
+<head>
+    <title>Album Cover Quizzes</title>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class = "logo">
+                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/quiz.html">Quiz</a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="quiz-container">
+        <div class="quiz-card" th:each="quiz : ${albumQuizzes}">
+            <div class="quiz-header">
+                <h2 class="quiz-number">Album Quiz</h2>
+            </div>
+            <div class="quiz-content">
+                <a th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}" class="quiz-link">
+                    <img th:src="${quiz.questions[0].getQuestionUrl()}" 
+                        alt="Album Cover" 
+                        class="quiz-image" />
+                </a>
+            </div>
+            <div class="quiz-footer">
+                <a th:href="@{/AlbumQuiz/{id}(id=${quiz.id})}" class="quiz-button">Play</a>            
+            </div>
+        </div>
+    </div>
+    <footer>
+        <a href="/quizzes/AlbumQuiz/generate"><button class="logout-button">Generate</button></a>
+        <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
+    </footer>
+</body>
+<script>
+    var logoutButton = document.getElementById("logoutButton");
+    logoutButton.addEventListener('click', userLogout);
+
+    function userLogout(evt) {
+        const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
+        setTimeout(() => logoutPopup.close(), 500);
+
+        evt.preventDefault();
+        setTimeout(() => location.reload(), 500);
+    }
+</script>
+</html>

@@ -14,7 +14,7 @@
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="quiz.html">Quiz</a></li>
+                <li><a href="/quizzes/getAll">Quiz</a></li>
             </ul>
         </nav>
     </header>
@@ -31,6 +31,8 @@
                 <th>Display Name</th>
                 <th>Email</th>
                 <th>Followers</th>
+                <th>Quizzes Played</th>
+                <th>Average Quiz Score</th>
                 <th>Admin</th>
                 <th>Actions</th>
             </tr>
@@ -41,6 +43,8 @@
                 <td th:text="${user.displayName}"></td>
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.followers}"></td>
+                <td th:text ="{user.quizCount}"></td>
+                <td th:text ="{user.quizScoreAverage}"></td>
                 <td th:text="${user.isAdmin ? 'Yes' : 'No'}"></td>
                 <td>
                     <form th:action="@{/admin/setAdmin}" method="post">

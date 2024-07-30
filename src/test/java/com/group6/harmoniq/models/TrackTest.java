@@ -17,6 +17,7 @@ public class TrackTest {
     private static final String name = "Bohemian Rhapsody";
     private static final String spotifyUrl = "https://open.spotify.com/track/7tFiyTwD0nx5a1eklYtX2J";
     private static final String albumCoverUrl = "https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a";
+    private static final String albumName = "A Night At The Opera";
     private static final Artist artist1 = new Artist(1L, "1dfeR4HaWDbWqFHLkxsg1d", "Queen", "https://open.spotify.com/artist/1dfeR4HaWDbWqFHLkxsg1d", "https://i.scdn.co/image/b040846ceba13c3e9c125d68389491094e7f2982");
     private static final List<Artist> artists = new ArrayList<>();
     static{
@@ -25,7 +26,7 @@ public class TrackTest {
 
     @BeforeEach
     public void setUp() {
-        track = new Track(uId, spotifyId, name, spotifyUrl, albumCoverUrl, artists);
+        track = new Track(uId, spotifyId, name, spotifyUrl, albumCoverUrl, albumName, artists);
     }
 
     @Test
@@ -43,6 +44,11 @@ public class TrackTest {
     @Test
     void testGetAlbumCoverUrl() {
         assertEquals(albumCoverUrl, track.getAlbumCoverUrl());
+    }
+
+    @Test
+    void testGetAlbumName() {
+        assertEquals(albumName, track.getAlbumName());
     }
 
     @Test
@@ -70,6 +76,13 @@ public class TrackTest {
         String newAlbumCoverUrl = "https://i.scdn.co/image/ab67616d0000b273008b06ec71019afd70153889";
         track.setAlbumCoverUrl(newAlbumCoverUrl);
         assertEquals(newAlbumCoverUrl, track.getAlbumCoverUrl());
+    }
+
+    @Test
+    void testSetAlbumName() {
+        String newAlbumName = "Help!";
+        track.setAlbumName(newAlbumName);
+        assertEquals(newAlbumName, track.getAlbumName());
     }
 
     @Test

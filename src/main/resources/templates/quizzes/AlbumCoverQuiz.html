@@ -10,21 +10,22 @@
     <div class="wrapper">
         <header>
             <div class = "logo">
-                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+                <a href="/toProfile"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/quiz.html">Quiz</a></li>
+                    <li><a href="/toProfile">Home</a></li>
+                    <li><a href="/quizzes/getAll">Quiz</a></li>
                 </ul>
             </nav>
         </header>
         <main>
-            <form th:action="@{/quizzes/AlbumCoverQuiz/submit}" method="post" class="form-container">
+            <form th:action="@{/AlbumQuiz/submit}" method="post" class="form-container">
                 <input type="hidden" name="questionId" th:value="${questionId}" />
+                <input type="hidden" name="quizId" th:value="${quizId}" />
                 <div class="quiz-content">
                     <div class="quiz-image">
-                        <img th:src="@{/{imagePath}(imagePath=${quiz.questionPath})}" alt="Quiz Image">
+                        <img th:src="${question.getQuestionUrl()}"  alt="Quiz Image">
                     </div>
                     <div class="options" th:each="option : ${options}">
                         <div>

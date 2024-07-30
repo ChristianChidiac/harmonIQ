@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick your Quiz</title>
-    <link rel="stylesheet" href="css/quiz-menu.css">
+    <link rel="stylesheet" th:href="@{/css/quiz-menu.css}">
     <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="wrapper">
         <header>
             <div class="logo">
-                <a href="/toProfile"><img src="images/harmoniqlogo.png" alt="Logo"></a>
+                <a href="/"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/toProfile">Home</a></li>
-                    <li><a href="/playlist">Collaborative Playlist</a></li>
-                    <li><a href="quiz.html">Quiz</a></li>
+                    <li><a href="profile">Home</a></li>
+                    <li><a href="/quizzes/getAll">Quiz</a></li>
                 </ul>
             </nav>
         </header>
@@ -26,7 +25,7 @@
                 <h1>PICK YOUR QUIZ</h1>
                 <div class="quiz-cards">
                     <div class="quiz-card">
-                        <a href="/quizzes/AlbumCoverQuiz">
+                        <a href="/quizzes/AlbumQuiz/getAll">
                             <div class="quiz-card-title">Album Cover</div>
                         </a>
                     </div>
