@@ -8,17 +8,19 @@ public class Track {
     private String name;
     private String spotifyUrl;
     private String albumCoverUrl;
+    private String albumName;
     private List<Artist> artists;
 
     public Track() {
     }
 
-    public Track(long uId, String spotifyId, String name, String spotifyUrl, String albumCoverUrl, List<Artist> artists) {
+    public Track(long uId, String spotifyId, String name, String spotifyUrl, String albumCoverUrl, String albumName, List<Artist> artists) {
         this.uId = uId;
         this.spotifyId = spotifyId;
         this.name = name;
         this.spotifyUrl = spotifyUrl;
         this.albumCoverUrl = albumCoverUrl;
+        this.albumName = albumName;
         this.artists = artists;
     }
 
@@ -60,6 +62,14 @@ public class Track {
 
     public void setAlbumCoverUrl(String albumCoverUrl) {
         this.albumCoverUrl = albumCoverUrl;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
     }
 
     public List<Artist> getArtists() {

@@ -149,7 +149,7 @@ public class UserTest {
         Artist topTrackArtist = new Artist(1, "06HL4z0CvFAxyc27GXpf02", "Taylor Swift", "https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02", "https://i.scdn.co/image/ab6761610000e5ebe672b5f553298dcdccb0e676");
         List <Artist> Artists = new ArrayList<>();
         Artists.add(topTrackArtist);
-        Track newTopTrack = new Track(1, "1BxfuPKGuaTgP7aM0Bbdwr", "Cruel Summer", "1BxfuPKGuaTgP7aM0Bbdwr", "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647", Artists);
+        Track newTopTrack = new Track(1, "1BxfuPKGuaTgP7aM0Bbdwr", "Cruel Summer", "https://open.spotify.com/track/1BxfuPKGuaTgP7aM0Bbdwr", "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647", "Lover", Artists);
         user.setTopTrack(newTopTrack);
         assertEquals(newTopTrack, user.getTopTrack());
     }
