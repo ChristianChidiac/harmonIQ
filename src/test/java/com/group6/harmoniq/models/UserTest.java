@@ -20,14 +20,17 @@ public class UserTest {
     private static final int followers = 0;
     private static final String imageUrl = "https://i.scdn.co/image/ab6775700000ee85637ec8caf0f0e2542dfddf9a";
     private static final String externalSpotifyUrl = "https://open.spotify.com/user/31rryrxu5pswlcjpb2qlrhrhqyyq";
+    private static final int addedSongs = 0;
+    private static final int addedSongsLimit = 5;
     private static final Artist topArtist = new Artist();
     private static final Track topTrack = new Track();
     private static final Boolean isAdmin = false;
+    private static final Boolean isCollaborator = false;
 
 
     @BeforeEach
     public void setUp() {
-        user = new User(spotifyId, displayName, email, followers, imageUrl, externalSpotifyUrl, topArtist, topTrack, isAdmin);
+        user = new User(spotifyId, displayName, email, followers, imageUrl, externalSpotifyUrl, addedSongs, addedSongsLimit, topArtist, topTrack, isAdmin, isCollaborator);
     }
 
     @Test

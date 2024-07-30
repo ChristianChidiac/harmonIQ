@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not a Collaborator</title>
+</head>
+<body>
+    <p>
+    You haven't joined the playlist as a collaborator. Click the join playlist button to begin adding songs to the playlist.
+    </p>
+    
+
+    <button id = "exitButton">Exit</button>
+
+    <script>
+      var exitButton = document.getElementById("exitButton");
+      exitButton.addEventListener('click', function() {
+        window.parent.postMessage("closePopup");
+      });
+    
+    </script>
+
+</body>
+</html>

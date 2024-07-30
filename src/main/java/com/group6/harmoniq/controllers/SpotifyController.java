@@ -80,7 +80,7 @@ public class SpotifyController {
         String state = generateRandomString(secureRandom, 16);
         Cookie stateCookie = new Cookie(stateKey, state);
         response.addCookie(stateCookie);
-        String scope = "user-read-private user-read-email user-follow-read user-top-read";
+        String scope = "user-read-private user-read-email user-follow-read user-top-read playlist-modify-public playlist-modify-private";
 
         // Requesting Authorization
         String authUrl = UriComponentsBuilder.fromHttpUrl(spotifyUrl + "/authorize")
@@ -158,6 +158,7 @@ public class SpotifyController {
 
 
                     session.setAttribute("currentUser", user);
+                    session.setAttribute("accessToken", accessToken);
 
 
                     model.addAttribute("user", user);
