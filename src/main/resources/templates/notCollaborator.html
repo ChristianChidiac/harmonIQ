@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Not a Collaborator</title>
+    <link rel="stylesheet" href="/css/add-songs.css">
 </head>
 <body>
-    <p>
-    You haven't joined the playlist as a collaborator. Click the join playlist button to begin adding songs to the playlist.
-    </p>
-    
+    <main class="add-song-section">
+        <div class="add-song-content">
+            <p id="collaboratorMessage">
+                You haven't joined the playlist as a collaborator. Click the join playlist button to begin adding songs to the playlist.
+            </p>
 
-    <button id = "exitButton">Exit</button>
+            <button id="exitButton" class="button-common">Exit</button>
+        </div>
+    </main>
 
     <script>
       var exitButton = document.getElementById("exitButton");
