@@ -226,7 +226,7 @@ public class QuizController {
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", score);
             allQuestion.clear();
-            allAlbumQuizzes.remove(quiz);
+            allAlbumQuizzes.clear();
             return "quizzes/quizResult";
         }
     }
@@ -245,7 +245,7 @@ public class QuizController {
 
     @GetMapping("/quizzes/recognitionQuiz/{questionId}")
     public String getRecognitionQuizQuestion(@PathVariable int questionId, Model model, HttpSession session) {
-
+        setCurrentUser(session);
         if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
             
             Map<String,Object> answer = recognitionQuizAnswers.get(questionId);
@@ -260,7 +260,6 @@ public class QuizController {
             model.addAttribute("questionId", questionId);
             return "quizzes/recognitionQuiz"; // Redirect to the quiz page
         } else {
-            setCurrentUser(session);
             userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", recognitionScore); // Add score to the model for the result page
@@ -270,12 +269,16 @@ public class QuizController {
    
     @PostMapping("/quizzes/recognitionQuiz/submit")
     public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") int questionId, Model model, HttpSession session) {
-
-        if (recognitionQuizAnswers != null && selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
-            recognitionScore++; // Increment score for correct answer
-            model.addAttribute("result", "Correct!");
-        } else {
-            model.addAttribute("result", "Incorrect.");
+        setCurrentUser(session);
+        if (recognitionQuizAnswers != null && currentUser != null) {
+            if (selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
+                userService.updateQuizResults(currentUser, 1, 1);
+                recognitionScore++; // Increment score for correct answer
+                model.addAttribute("result", "Correct!");
+            } else {
+                userService.updateQuizResults(currentUser, 0, 1);
+                model.addAttribute("result", "Incorrect.");
+            }
         }
 
 
@@ -286,7 +289,6 @@ public class QuizController {
         if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
             return "redirect:/quizzes/recognitionQuiz/" + currentRecognitionQuestionIndex;
         } else {
-            setCurrentUser(session);
             userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", recognitionScore);
