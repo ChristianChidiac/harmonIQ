@@ -273,8 +273,14 @@ public class QuizController {
 
         if (recognitionQuizAnswers != null && selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
             recognitionScore++; // Increment score for correct answer
+            if(currentUser != null){
+                userService.updateQuizResults(currentUser, 1, 1);
+            }
             model.addAttribute("result", "Correct!");
         } else {
+            if(currentUser != null){
+                userService.updateQuizResults(currentUser, 0, 1);
+                }
             model.addAttribute("result", "Incorrect.");
         }
 
