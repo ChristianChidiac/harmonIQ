@@ -35,6 +35,20 @@ public class UserService {
         }
     }
 
+    public void incrementUserAddedSongsLimit(User user) {
+        if (user != null) {
+            User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
+            if (existingUser != null) {
+                existingUser.incrementAddedSongsLimit();
+                userRepository.save(existingUser);
+            } else {
+                // Handle the case where the user doesn't exist yet (optional)
+                System.out.println("User not found in database");
+                userRepository.save(user); 
+            }
+        }
+    }
+
     public void updateQuizResults(User user, int correctAnswers, int questions) {
         if (user != null) {
             // Look for the user in the database

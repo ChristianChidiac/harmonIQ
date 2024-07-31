@@ -58,6 +58,7 @@ nav ul li a {
     flex-wrap: wrap;
     justify-content: center;
     gap: 2rem;
+    margin-bottom: 1rem;
 }
 
 .quiz-card {

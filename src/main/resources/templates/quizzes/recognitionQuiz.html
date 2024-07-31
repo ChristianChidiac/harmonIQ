@@ -10,33 +10,37 @@
     <div class="wrapper">
         <header>
             <div class = "logo">
-                <a href="/index.html"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
+                <a href="/toProfile"><img th:src="@{/images/harmoniqlogo.png}" alt="Logo"></a>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/quizzes/getAll">Album Quiz</a></li>
+
+                    <li><a href="/toProfile">Home</a></li>
+                    <li><a href="/quizzes/getAll">Quizzes</a></li>
                     <li><a href="/playlist">Collaborative Playlist</a></li>
+
                 </ul>
             </nav>
         </header>
         <form th:action="@{/quizzes/recognitionQuiz/submit}" method="post" class="form-container">
             <input type="hidden" name="questionId" th:value="${questionId}" />
-            
+           
 
-        <audio id="audioPlayer">       
+
+        <audio id="audioPlayer">      
         </audio>
-        
+       
         <button type="button" id="play-button" class="audio-controls">Play</button>
         <button type="button" id="pause-button" class="audio-controls">Pause</button>
+
 
         <div>
         <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7"/>
     </div>
-    
+   
             <div th:each="option : ${options}">
-                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option}" required />
-                <label th:for="${option}" th:text="${option}"></label>
+                <input type="radio" th:id="${option}" name="selectedOption" th:value="${option.name}" required />
+                <label th:for="${option}" th:text="${option.name}"></label>
             </div>
             <button type="submit">Submit</button>
         </form>
@@ -47,19 +51,21 @@
 </body>
 <script th:inline="javascript">
 
-    var previewUrl = /*[[${preview}]]*/ '';
+
+    var previewUrl = /*[[${answer.preview_url}]]*/ '';
     var audioPlayer = document.getElementById('audioPlayer');
     audioPlayer.src = previewUrl;
+
 
     var playButton = document.getElementById('play-button');
     playButton.addEventListener('click', () => {
         playButton.innerHTML = "Playing";
         audioPlayer.play();
     });
-    
+   
     let timeoutCounter;
     let timeLeft = 5000;
-    
+   
     //Pauses and resets audio file to 0 seconds after 5 seconds of play
     audioPlayer.addEventListener('play', () => {
         timeoutCounter = setTimeout(() => {
@@ -70,6 +76,7 @@
             }, timeLeft);
         });
 
+
     //Pauses the audio file, clears the timeoutCounter, and records the time left in the audio file
     var pauseButton = document.getElementById('pause-button');
     pauseButton.addEventListener('click', () => {
@@ -79,22 +86,27 @@
         playButton.innerHTML = "Play";
     });
 
+
     const volumeSlider = document.getElementById('volumeSlider');
+
 
     //Initializes volume to starting value
     audioPlayer.volume = volumeSlider.value;
+
 
     //Changes volume to newly inputed volume
     volumeSlider.addEventListener('input', function() {
         audioPlayer.volume = volumeSlider.value;
     });
 
+
     var logoutButton = document.getElementById("logoutButton");
     logoutButton.addEventListener('click', userLogout);
-    
+   
     function userLogout(evt) {
         const logoutPopup = window.open('https://www.spotify.com/logout/', 'Spotify Logout', 'width=1,height=1,top=1000,left=1000');
         setTimeout(() => logoutPopup.close(), 500);
+
 
         evt.preventDefault();
         setTimeout(() => location.reload(), 500);

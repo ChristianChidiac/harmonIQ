@@ -11,13 +11,14 @@
 <div class="wrapper">
     <header>
         <div class="logo">
-            <a href="/"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
+            <a href="/toProfile"><img src="/images/harmoniqlogo.png" alt="Logo"></a>
         </div>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
+                <li><a href="/toProfile">Home</a></li>
+                <li><a href="/quizzes/getAll">Quizzes</a></li>
                 <li><a href="/playlist">Collaborative Playlist</a></li>
-                <li><a href="/quiz.html">Quiz</a></li>
+                
             </ul>
         </nav>
     </header>
@@ -61,7 +62,7 @@
         joinButton.addEventListener('click', joinPlaylist);
 
         function joinPlaylist(evt) {
-            const joinPopup = window.open('https://open.spotify.com/playlist/57E2lj7B6neeSqhqCs51RJ?si=2010bd8d34684168&pt=e72a465f4d35b69136ae1dac0b115ee9',
+            const joinPopup = window.open('https://open.spotify.com/playlist/57E2lj7B6neeSqhqCs51RJ?si=c-Wu6lqkR4utBAU1jZPtrw&pt=3cdd977bd1bad6ce3e32eb0d372cebfe&pi=rvhXh--ySmi6T',
              'Join Playlist', 'width=1,height=1,top=1000,left=1000');
             setTimeout(() => logoutPopup.close(), 3000);
 
