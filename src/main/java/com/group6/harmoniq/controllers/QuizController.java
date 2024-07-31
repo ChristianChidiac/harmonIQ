@@ -200,18 +200,22 @@ public class QuizController {
 
     @PostMapping("/AlbumQuiz/submit")
     public String processAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") Long questionId, @RequestParam("quizId") Long quizId, Model model, HttpSession session) {
-        
+        setCurrentUser(session);
         AlbumQuiz quiz = getQuizById(quizId);
         List<QuizQuestion> allQuestion = quiz.getQuestions();
     
         if (allQuestion.size() < 5) { return "quizzes/errorPage"; }
     
         QuizQuestion question = allQuestion.get(currentQuestionIndex);
-        if (question != null && selectedOption.equals(question.getAnswer())) {
-            score++;
-            model.addAttribute("result", "Correct!"); //TODO: add score design and logic
-        } else {
-            model.addAttribute("result", "Incorrect.");
+        if (question != null && currentUser != null) {
+            int questionScore = selectedOption.equals(question.getAnswer()) ? 1 : 0;
+            score += questionScore;
+            userService.updateQuizResults(currentUser, questionScore, 1);
+            if (questionScore == 1) {
+                model.addAttribute("result", "Correct!");
+            } else {
+                model.addAttribute("result", "Incorrect.");
+            }
         }
         currentQuestionIndex++;
     

@@ -225,6 +225,10 @@ public class User {
         this.quizScoreAverage = quizScoreAverage;
     }
 
+    public void setQuizCount(int quizCount) {
+        this.quizCount = quizCount;
+    }
+
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;

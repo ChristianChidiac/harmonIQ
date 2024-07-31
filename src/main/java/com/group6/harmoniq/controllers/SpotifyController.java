@@ -146,7 +146,16 @@ public class SpotifyController {
                     user.setTopTrack(topTracks.get(0));
                     
                     saveUserToDatabase(user);
-         
+
+
+                    User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
+
+                    user.setQuizCount(existingUser.getQuizCount());
+                    user.setTotalQuestions(existingUser.getTotalQuestionsAnswered());
+                    user.setTotalCorrectAnswers(existingUser.getTotalCorrectAnswers());
+                    user.setQuizScoreAverage(existingUser.getQuizScoreAverage());
+
+
                     session.setAttribute("access_token", accessToken);
                     session.setAttribute("refresh_token", refreshToken);
 
@@ -158,7 +167,7 @@ public class SpotifyController {
 
                     session.setAttribute("currentUser", user);
                     session.setAttribute("accessToken", accessToken);
-          
+
                     model.addAttribute("user", user);
                     
                     
