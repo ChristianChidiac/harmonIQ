@@ -245,7 +245,6 @@ public class QuizController {
 
     @GetMapping("/quizzes/recognitionQuiz/{questionId}")
     public String getRecognitionQuizQuestion(@PathVariable int questionId, Model model, HttpSession session) {
-        setCurrentUser(session);
         if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
             
             Map<String,Object> answer = recognitionQuizAnswers.get(questionId);
@@ -260,6 +259,7 @@ public class QuizController {
             model.addAttribute("questionId", questionId);
             return "quizzes/recognitionQuiz"; // Redirect to the quiz page
         } else {
+            setCurrentUser(session);
             userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", recognitionScore); // Add score to the model for the result page
@@ -289,6 +289,7 @@ public class QuizController {
         if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
             return "redirect:/quizzes/recognitionQuiz/" + currentRecognitionQuestionIndex;
         } else {
+            setCurrentUser(session);
             userService.incrementUserQuizCount(currentUser); // Increment user quiz count at the end of the quiz
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", recognitionScore);
