@@ -25,19 +25,20 @@ header .logo img {
 }
 
 nav ul {
-    list-style: none;
+    list-style-type: none;
     display: flex;
-    gap: 2rem;
+    margin: 0;
+    padding: 0;
 }
 
 nav ul li {
-    font-family: "Azeret Mono", monospace;
-    font-size: 1.5rem;
+    margin: 0 1rem;
 }
 
 nav ul li a {
     text-decoration: none;
-    color: black;
+    color: #000;
+    font-weight: bold;
 }
 
 .form-container {
