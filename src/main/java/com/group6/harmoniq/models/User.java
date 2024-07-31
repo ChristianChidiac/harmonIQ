@@ -201,6 +201,11 @@ public class User {
         this.quizCount++;
     }
 
+    public void incrementAddedSongsLimit() {
+        this.addedSongsLimit++;
+    }
+
+
     public int getTotalCorrectAnswers() {
         return totalCorrectAnswers;
     }

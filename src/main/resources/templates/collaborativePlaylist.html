@@ -16,8 +16,9 @@
         <nav>
             <ul>
                 <li><a href="/toProfile">Home</a></li>
+                <li><a href="/quizzes/getAll">Quizzes</a></li>
                 <li><a href="/playlist">Collaborative Playlist</a></li>
-                <li><a href="/quiz.html">Quiz</a></li>
+                
             </ul>
         </nav>
     </header>
@@ -62,7 +63,7 @@
 
         function joinPlaylist(evt) {
             const joinPopup = window.open('https://open.spotify.com/playlist/57E2lj7B6neeSqhqCs51RJ?si=c-Wu6lqkR4utBAU1jZPtrw&pt=3cdd977bd1bad6ce3e32eb0d372cebfe&pi=rvhXh--ySmi6T',
-             'Join Playlist', 'width=1,height=1,top=1000,left=1000');
+             'Join Playlist', 'width=900,height=900,top=1000,left=1000');
             setTimeout(() => logoutPopup.close(), 3000);
 
             evt.preventDefault();

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -437,8 +438,8 @@ public class SpotifyController {
     }
     @GetMapping("/toProfile")
     public String goToProfile(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("currentUser");
-        model.addAttribute("user", user);
+        
+        model.addAttribute("user",  getExistingUser(session));
 
         List<Track> topTracks = (List<Track>) session.getAttribute("topTracks");
         model.addAttribute("topTracks", topTracks);
@@ -447,5 +448,27 @@ public class SpotifyController {
         model.addAttribute("topArtists", topArtists);
 
         return "profile";
+    }
+
+
+    private User getExistingUser(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser != null)
+        {
+            User existingUser = userRepository.findBySpotifyId(currentUser.getSpotifyId());
+            if(existingUser != null)
+            {
+                session.setAttribute("currentUser", existingUser);
+                return existingUser;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not in database.");
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User session has expired.");
+        }
     }
 }
