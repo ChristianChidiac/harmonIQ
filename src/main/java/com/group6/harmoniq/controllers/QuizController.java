@@ -269,18 +269,18 @@ public class QuizController {
    
     @PostMapping("/quizzes/recognitionQuiz/submit")
     public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") int questionId, Model model, HttpSession session) {
-        setCurrentUser(session);
-        if (recognitionQuizAnswers != null && currentUser != null) {
-            if (selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
+        if (recognitionQuizAnswers != null && selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
+            recognitionScore++; // Increment score for correct answer
+            if(currentUser != null){
                 userService.updateQuizResults(currentUser, 1, 1);
-                recognitionScore++; // Increment score for correct answer
-                model.addAttribute("result", "Correct!");
-            } else {
-                userService.updateQuizResults(currentUser, 0, 1);
-                model.addAttribute("result", "Incorrect.");
             }
+            model.addAttribute("result", "Correct!");
+        } else {
+            if(currentUser != null){
+                userService.updateQuizResults(currentUser, 0, 1);
+                }
+            model.addAttribute("result", "Incorrect.");
         }
-
 
         currentRecognitionQuestionIndex++; // Move to the next question
 
