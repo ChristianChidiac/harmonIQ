@@ -35,7 +35,6 @@ import com.group6.harmoniq.models.User;
 import com.group6.harmoniq.models.UserRepository;
 import com.group6.harmoniq.services.SpotifyService;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -53,9 +52,12 @@ public class SpotifyController {
     private String accessToken;
     private String refreshToken;
     private final SpotifyService spotifyService;
+   
+    private final RestTemplate restTemplate;
 
-    public SpotifyController(SpotifyService spotifyService) {
+    public SpotifyController(SpotifyService spotifyService, RestTemplate restTemplate) {
         this.spotifyService = spotifyService;
+        this.restTemplate = restTemplate;
 
         this.client_id = this.spotifyService.getClientId();
         this.client_secret = this.spotifyService.getClientSecret();
@@ -73,6 +75,7 @@ public class SpotifyController {
         SecureRandom secureRandom;
         try {
             secureRandom = SecureRandom.getInstanceStrong();
+           
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -90,7 +93,7 @@ public class SpotifyController {
                 .queryParam("redirect_uri", redirect_uri)
                 .queryParam("state", state)
                 .toUriString();
-
+      
         return "redirect:" + authUrl;
     }
 
@@ -114,7 +117,6 @@ public class SpotifyController {
             bodyParams.put("redirect_uri", redirect_uri);
             bodyParams.put("grant_type", "authorization_code");
 
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set("Authorization", authHeader);
@@ -136,7 +138,7 @@ public class SpotifyController {
                     refreshToken = (String) body.get("refresh_token");
     
                     User user = getUserProfile(accessToken);
-
+                 
                     List<Track> topTracks = getTopTracks(accessToken);
                     List<Artist> topArtists = getTopArtists(accessToken);
 
@@ -145,6 +147,7 @@ public class SpotifyController {
                     
                     saveUserToDatabase(user);
 
+
                     User existingUser = userRepository.findBySpotifyId(user.getSpotifyId());
 
                     user.setQuizCount(existingUser.getQuizCount());
@@ -152,7 +155,7 @@ public class SpotifyController {
                     user.setTotalCorrectAnswers(existingUser.getTotalCorrectAnswers());
                     user.setQuizScoreAverage(existingUser.getQuizScoreAverage());
 
-                    
+
                     session.setAttribute("access_token", accessToken);
                     session.setAttribute("refresh_token", refreshToken);
 
@@ -162,16 +165,16 @@ public class SpotifyController {
                     model.addAttribute("topTracks", topTracks);
                     model.addAttribute("topArtists", topArtists);
 
-
                     session.setAttribute("currentUser", user);
                     session.setAttribute("accessToken", accessToken);
 
                     model.addAttribute("user", user);
-    
+                    
+                    
                 } catch (Exception e) {
                     model.addAttribute("error", e.getMessage());
                 }
-
+              
                 return "profile";
             } else {
                 return "redirect:/index.html";
@@ -204,7 +207,7 @@ public class SpotifyController {
     private void getFollowedArtists(String accessToken, Model model) {
 
         String url = "https://api.spotify.com/v1/me/following?type=artist";
-        RestTemplate restTemplate = new RestTemplate();
+        //RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -224,7 +227,7 @@ public class SpotifyController {
     private User getUserProfile(String accessToken) throws Exception {
 
         String url = "https://api.spotify.com/v1/me";
-        RestTemplate restTemplate = new RestTemplate();
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -242,7 +245,6 @@ public class SpotifyController {
             if (images.size() > 0) {
                 user.setImageUrl((String) images.get(1).get("url"));
             }
-
             var followers = (Map<String, Object>) response.getBody().get("followers");
             user.setFollowers((int) followers.get("total"));
 
@@ -264,6 +266,7 @@ public class SpotifyController {
     
         try {
             RestTemplate restTemplate = new RestTemplate();
+            
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
     
             // Extract artist data directly from the response
@@ -308,7 +311,7 @@ public class SpotifyController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         try {
-            RestTemplate restTemplate = new RestTemplate();
+            
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
             
             List<Map<String, Object>> topTracksJson = (List<Map<String, Object>>) response.getBody().get("items");
@@ -321,7 +324,7 @@ public class SpotifyController {
                 .map(trackJson -> {
                     Track track = new Track();
                     track.setName((String) trackJson.get("name"));
-                    
+                 
                     // Extract artist information
                     var artistsJson = (List<Map<String, Object>>) trackJson.get("artists");
                     var artists = artistsJson.stream().map(artistJson -> {
@@ -431,5 +434,18 @@ public class SpotifyController {
             // (e.g., log an error, return null, throw an exception)
             return null;
         }
+    }
+    @GetMapping("/toProfile")
+    public String goToProfile(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("currentUser");
+        model.addAttribute("user", user);
+
+        List<Track> topTracks = (List<Track>) session.getAttribute("topTracks");
+        model.addAttribute("topTracks", topTracks);
+
+        List<Artist> topArtists = (List<Artist>) session.getAttribute("topArtists");
+        model.addAttribute("topArtists", topArtists);
+
+        return "profile";
     }
 }

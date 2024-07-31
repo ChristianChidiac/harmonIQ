@@ -115,7 +115,6 @@ public String showAddSongsPopup(HttpSession session, Model model)
 }
 
 
-
 @PostMapping("/addSong")
 public String addSongAndNextSong(@RequestParam("trackUri") String trackUri, HttpSession session, Model model)
 {
