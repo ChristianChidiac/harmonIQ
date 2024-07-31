@@ -258,7 +258,7 @@ public class SpotifyController {
     private List<Artist> getTopArtists(String accessToken) throws Exception {
 
         // Modify the URL to request top artists (you can adjust the 'limit' parameter)
-        String url = "https://api.spotify.com/v1/me/top/artists?limit=10"; 
+        String url = "https://api.spotify.com/v1/me/top/artists?limit=15"; 
     
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
@@ -305,7 +305,7 @@ public class SpotifyController {
 
     private List<Track> getTopTracks(String accessToken) throws Exception {
 
-        String url = "https://api.spotify.com/v1/me/top/tracks?limit=10";
+        String url = "https://api.spotify.com/v1/me/top/tracks?limit=15";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);

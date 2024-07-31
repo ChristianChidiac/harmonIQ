@@ -226,7 +226,7 @@ public class QuizController {
             userService.incrementUserAddedSongsLimit(currentUser); //Increment user addedSongsLimit at the end of the quiz
             model.addAttribute("score", score);
             allQuestion.clear();
-            allAlbumQuizzes.remove(quiz);
+            allAlbumQuizzes.clear();
             return "quizzes/quizResult";
         }
     }
@@ -245,7 +245,6 @@ public class QuizController {
 
     @GetMapping("/quizzes/recognitionQuiz/{questionId}")
     public String getRecognitionQuizQuestion(@PathVariable int questionId, Model model, HttpSession session) {
-
         if (currentRecognitionQuestionIndex < recognitionQuizAnswers.size()) {
             
             Map<String,Object> answer = recognitionQuizAnswers.get(questionId);
@@ -270,7 +269,6 @@ public class QuizController {
    
     @PostMapping("/quizzes/recognitionQuiz/submit")
     public String processRecogntionQuizAnswer(@RequestParam("selectedOption") String selectedOption, @RequestParam("questionId") int questionId, Model model, HttpSession session) {
-
         if (recognitionQuizAnswers != null && selectedOption.equals((recognitionQuizAnswers.get(questionId)).get("name"))) {
             recognitionScore++; // Increment score for correct answer
             if(currentUser != null){
@@ -283,7 +281,6 @@ public class QuizController {
                 }
             model.addAttribute("result", "Incorrect.");
         }
-
 
         currentRecognitionQuestionIndex++; // Move to the next question
 
