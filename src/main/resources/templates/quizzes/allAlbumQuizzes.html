@@ -19,7 +19,7 @@
                 </ul>
             </nav>
         </header>
-    </div>
+    <main>
     <div class="quiz-container">
         <div class="quiz-card" th:each="quiz : ${albumQuizzes}">
             <div class="quiz-header">
@@ -37,8 +37,10 @@
             </div>
         </div>
     </div>
+        <a href="/quizzes/AlbumQuiz/generate" class="generate-button">Generate</a>
+    </main>
+    </div>
     <footer>
-        <a href="/quizzes/AlbumQuiz/generate"><button class="logout-button">Generate</button></a>
         <a href="/logout" id="logoutButton"><button class="logout-button">Log Out</button></a>
     </footer>
 </body>

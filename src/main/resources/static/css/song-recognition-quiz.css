@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family:"Azeret Mono", monospace;
     margin: 0;
     padding: 0;
     background-color: #DDFFDB;
@@ -37,7 +37,7 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #000;
+    color: black;
     font-weight: bold;
 }
 
@@ -74,6 +74,7 @@ form button {
     border-radius: 10px;
     display: inline-block;
     margin-top: 2rem;
+    transition: background-color 0.3s;
 }
 
 form button:hover {
@@ -91,7 +92,7 @@ h1 {
 
 p {
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: "Azeret Mono", monospace;
     font-size: 1.5rem;
     margin-top: 1rem;
 }

@@ -82,6 +82,7 @@ nav ul li a {
     font-weight: bold;
     background-color: #9AEC98;
     padding: 0.5rem;
+    transition: background-color 0.3s;
 }
 
 .quiz-card-title:hover {
