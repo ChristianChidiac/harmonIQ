@@ -32,6 +32,7 @@ public class UserService {
                 System.out.println("User not found in database");
                 userRepository.save(user); 
             }
+
         }
     }
 
@@ -46,6 +47,7 @@ public class UserService {
                 System.out.println("User not found in database");
                 userRepository.save(user); 
             }
+
         }
     }
 
